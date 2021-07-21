@@ -1,0 +1,22 @@
+
+
+.header {
+    .ulHeader {
+        width: 95%;
+        max-width: 1400px;
+        margin: 30px auto;
+        display: grid;
+        grid-template-columns: 100px 1fr 100px;
+        li {
+            text-align: center;
+        }
+    }
+}
+
+.h1Title {
+    width: 105px;
+   margin: 300px auto 0 auto;
+   font-weight: 400;
+   font-size: 40px;
+   text-transform: uppercase;
+}

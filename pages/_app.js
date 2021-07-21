@@ -1,9 +1,14 @@
-import '../styles/globals.css'
+import { Provider } from 'next-auth/client';
+//import 'semantic-ui-css/semantic.min.css';
+import Layout from '../components/Layout';
 
-function MyApp({ Component, pageProps }) {
-  //globalStore.set('baseUrl', 'some url 1');
-
-  return <Component {...pageProps} />
+export default function App({ Component, pageProps }) {
+  // this is now wrapped around 
+  return (
+    <Layout>
+    <Provider session={pageProps.session}>
+      <Component {...pageProps} />
+    </Provider>
+     </Layout>
+  )
 }
-
-export default MyApp

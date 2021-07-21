@@ -1,0 +1,21 @@
+.th {
+   // color: blue;
+   text-transform: uppercase;
+}
+.table {
+    text-align: left;
+    width: 100%;
+
+}
+
+.th:nth-child(1n+2), .td:nth-child(1n+2) {
+   // padding-left: 3rem;
+    padding-bottom: 0.5rem;
+}
+.tableLink {
+    text-transform: uppercase;
+    font-size: 0.8rem;
+}
+.tableContainer {
+    margin-bottom: 100px;
+}

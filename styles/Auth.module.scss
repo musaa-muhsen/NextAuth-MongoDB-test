@@ -1,0 +1,40 @@
+
+
+.header {
+    display: grid;
+    grid-template-columns: auto 1fr  110px;
+    margin: 20px auto ;
+    width: 95%;
+    max-width: 1400px;
+}
+
+.logOutBtn {
+  
+    display: block;
+
+    background: var(--black);
+    padding: 0 20px;
+    text-align: center;
+    color:var(--white);
+    border: var(--white) solid 1px; 
+    border-radius: 50px;
+    font-size: 15px;
+    font-weight: 400;
+    text-transform: capitalize;
+    cursor: pointer;
+    height: 50px;
+    width: 100%;
+    transition: background-color 0.3s ease-in-out;
+    &:hover {
+
+// background: rgba(#232323, 0.8);
+background-color: rgb(27, 27, 27); 
+color:var(--white);
+    }
+}
+
+.mainContainer{
+    margin: 0 auto;
+    width: 95%;
+    max-width: 1400px;
+}
