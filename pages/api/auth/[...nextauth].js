@@ -2,7 +2,7 @@ import NextAuth from 'next-auth'
 import Providers from 'next-auth/providers'
 import axios from 'axios'
 
-export default NextAuth({
+const options = {
   // Configure one or more authentication providers
   providers: [
     Providers.Credentials({
@@ -11,28 +11,31 @@ export default NextAuth({
             username: {label: "Username", type: 'text', placeholder: 'username'},
             password: {label: "Password", type: 'password' , placeholder : 'password'}
         },
-        async authorize(credentials, req) {
-          //const user = { email: credentials.username, password: credentials.password }
-          // here is where we connect to the api 
-            //console.log(credentials); //'token username password returned'
-            //console.log('@@@@@@@@@@@@@@@@@@@@@@@')
-           // console.log(req.body.username);
-            const users = await axios.get(`http://localhost:3000/api/users/`);
-           // const trueUser = users.data.map(d => console.log(d));
-            //console.log(trueUser);
-           const user = {username: 'john doe', password: '1111'}
-           //console.log(user);
-           // the return value is the validation 
-      if (user) {
-        // Any object returned will be saved in `user` property of the JWT
-        return user
-      } else {
-        // If you return null or false then the credentials will be rejected
-        return null
-        // You can also Reject this callback with an Error or with a URL:
-        // throw new Error('error message') // Redirect to error page
-        // throw '/path/to/redirect'        // Redirect to a URL
-      }
+      
+        authorize: async (credentials, req) => {
+          //const userCredentials = { username: credentials.username, password: credentials.password }
+          const usersDB = await axios.get(`http://localhost:3000/api/users/`);
+          
+          // console.log(userCredentials);
+          // console.log('@@@@@@@@@@@@@@@@@@@@@@')
+          // console.log(usersDB.data.data);  
+
+          const filteredUser = usersDB.data.data.filter((e,i,a) => {
+            return e.userName === credentials.username && e.password === credentials.password
+            });
+           console.log(filteredUser._id)
+           // or !emails || emails.length === 0
+            if (filteredUser.length > 0) {
+              const user = { 
+                             name: filteredUser[0].userName,
+                             email: filteredUser[0].password , 
+                             image: filteredUser[0]._id
+                            }
+              return Promise.resolve(user);
+            } else {
+              console.log('no user')
+              return null
+            }
         }
     }),
   ],
@@ -40,14 +43,49 @@ export default NextAuth({
       jwt: true,
       maxAge: 30 * 24 * 60 * 60 // 30 days
   },
-  // callbacks: {
-  //   redirect: async (url, _) => {
-  //     if (url === '/api/auth/signin') {
-  //       return Promise.resolve('/dashboard')
-  //     }
-  //     return Promise.resolve('/api/auth/signin')
-  //   },
-  //   // database goes here maybe 
-  // }
+  callbacks: {
+  
+    redirect: async (url, baseUrl) => {
+      // if (url === '/api/auth/signin') {
+      //   // if we're on this page redirect 
+      //   return Promise.resolve('/dashboard')
+      // }
+        // startsWith is 
+        return url.startsWith(baseUrl)
+        ? Promise.resolve('/dashboard')
+        : Promise.resolve(url);    
+      },
+      signIn: async (user, account, profile) => {
+        //console.log(user, 'this is user')
+        console.log('this is the profile:', profile);
+         debugger;
+        return true;
+      },
+      async jwt(token, user, account, profile, isNewUser) {
+        //console.log(token, user, account, profile, isNewUser)
+        if (account?.accessToken) {
+          token.accessToken = account.accessToken
+        }
+        if (user?.roles) {
+          token.roles = user.roles
+        }
+        return token
+      },
+      async session(session, token) {
+        console.log('this is session & token:' ,session, token)
+        if(token?.accessToken) {
+          session.accessToken = token.accessToken
+        }
+        if (token?.roles) {
+          session.user.roles = token.roles
+        }
+        return session
+      }
+},
+  
 
-})
+    
+
+};
+
+export default (req, res) => NextAuth(req, res, options);

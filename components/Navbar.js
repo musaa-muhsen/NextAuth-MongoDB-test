@@ -2,12 +2,15 @@ import Link from 'next/link';
 
 const Navbar = () => (
     <nav>
-        <Link href="/">
-            <a>Note App</a>
+        <div> <Link href="/">
+            <a>All Users</a>
+        </Link></div>
+       <div>
+       <Link href="/new">
+            <a>Create User</a>
         </Link>
-        <Link href="/new">
-            <a>Create note</a>
-        </Link>
+       </div>
+      
     </nav>
 )
 

@@ -3,28 +3,28 @@ import {useState, useEffect} from 'react'
 import axios from 'axios'
 //import {Button , Form, Loader } from 'semantic-ui-react';
 import { useRouter } from 'next/router';
-//import fetch from 'isomorphic-unfetch';
+import fetch from 'isomorphic-unfetch';
 
 
 
 const EditUser = ({user}) => {
-    //console.log(user)
+    
    // console.log(user)
   //const [form, setForm] = useState({})
     const [form, setForm] = useState({userName: user.data.userName, password: user.data.password});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setErrors] = useState({});
     const router = useRouter();
-console.log(form);
+    
 
     useEffect(() => {
         if (isSubmitting) {
-            console.log(true)
+           // console.log(true)
             if (Object.keys(errors).length === 0) {
                 updateUser();
             }
             else {
-                console.log(false)
+               // console.log(false)
                 setIsSubmitting(false);
             }
         }
@@ -64,10 +64,11 @@ console.log(form);
     const validate = () => {
         let err = {};
 
-        if (!form.title) {
+        if (!form.userName) {
             err.userName = 'User name is required';
+            console.log(err.userName)
         }
-        if (!form.description) {
+        if (!form.password) {
             err.password = 'Password is required';
         }
 
@@ -107,21 +108,9 @@ return (
 export default EditUser;
 
 export const getServerSideProps  = async ({ query: { id } }) => {
-    //console.log(id)
-
       try {
-          // this is for node behavour
-    //    const user = await axios({
-    //         method: 'get',
-    //         url: `http://localhost:3000/api/users/${id}`,
-    //         responseType: 'stream'
-    //       })
-        //const res = await fetch(`http://localhost:3000/api/users/${id}`);
-       // const { data } = await res.json();
-        //console.log(hello)
         const res = await axios.get(`http://localhost:3000/api/users/${id}`);
-        console.log(res.data)
-       
+        //console.log(res.data)
         return {
             props: {
               user: res.data
@@ -136,3 +125,13 @@ export const getServerSideProps  = async ({ query: { id } }) => {
         }
     }
 }
+
+          // this is for node behavour
+    //    const user = await axios({
+    //         method: 'get',
+    //         url: `http://localhost:3000/api/users/${id}`,
+    //         responseType: 'stream'
+    //       })
+        //const res = await fetch(`http://localhost:3000/api/users/${id}`);
+       // const { data } = await res.json();
+        //console.log(hello)

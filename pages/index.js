@@ -5,10 +5,23 @@ import styles from '../styles/Home.module.scss';
 import { useRouter } from 'next/router'
 import axios from 'axios';
 //import { Button, Card } from 'semantic-ui-react';
-
+//null, { callbackUrl: 'http://localhost:3000/dashboard' }
 export default function Page({users}) {
     const [ session, loading ] = useSession();
-    console.log(users.data);
+
+    if (loading) {
+      return <p>Loading...</p>;
+    }
+
+    const userCred = { username: 'tom ford', password: '76917691hhh' }
+    //console.log(userCred.username);
+    //const mapped = users.data.map((i) => console.log(i.password));
+
+    const filtered = users.data.filter((e,i,a) => {
+    return  e.userName === userCred.username && e.password === userCred.password
+    });
+    
+    console.log(filtered[0]._id);
 
   return <>
    <div>
@@ -18,14 +31,17 @@ export default function Page({users}) {
             <div key={user._id}>
               <section>
                 <div>
-                    <Link href={`/${user._id}`}>
-                      {/* <a>{user.userName}</a> */}
+                    {/*<Link href={`/${user._id}`}>
+                       <a>{user.userName}</a> 
                       <a>{user.password}</a>
-                    </Link>
+                    </Link>*/}
+                    <p>user name: {user.userName}</p>
+                    <p>password: {user.password}</p>
+                    <p>database id: {user._id}</p>
                 </div>
                 <div>
                   <Link href={`/${user._id}`}>
-                    <button>View</button>
+                    <button>Delete</button>
                   </Link>
                   <Link href={`/${user._id}/edit`}>
                     <button>Edit</button>
