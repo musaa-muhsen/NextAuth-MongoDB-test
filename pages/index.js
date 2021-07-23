@@ -6,28 +6,28 @@ import { useRouter } from 'next/router'
 import axios from 'axios';
 //import { Button, Card } from 'semantic-ui-react';
 
-export default function Page({notes}) {
-    //const [ session, loading ] = useSession();
-    console.log(notes.data)
+export default function Page({users}) {
+    const [ session, loading ] = useSession();
+    console.log(users.data);
 
   return <>
-   <div className="notes-container">
-      <h1>Notes</h1>
-      <div className="grid wrapper">
-        {notes.data.map(note => {
+   <div>
+      <div>
+        {users.data.map(user => {
           return (
-            <div key={note._id}>
+            <div key={user._id}>
               <section>
                 <div>
-                    <Link href={`/${note._id}`}>
-                      <a>{note.title}</a>
+                    <Link href={`/${user._id}`}>
+                      {/* <a>{user.userName}</a> */}
+                      <a>{user.password}</a>
                     </Link>
                 </div>
                 <div>
-                  <Link href={`/${note._id}`}>
+                  <Link href={`/${user._id}`}>
                     <button>View</button>
                   </Link>
-                  <Link href={`/${note._id}/edit`}>
+                  <Link href={`/${user._id}/edit`}>
                     <button>Edit</button>
                   </Link>
                 </div>
@@ -38,7 +38,7 @@ export default function Page({notes}) {
       </div>
     </div> 
 
-     {/* <header className={styles.header}>
+     <header className={styles.header}>
               <ul className={styles.ulHeader}>
                 <li>Menu</li>
                 <li></li>
@@ -48,12 +48,12 @@ export default function Page({notes}) {
                    <button onClick={() => signIn()}>Sign in</button>
                  </>}
                  {session && <>
-      Signed in as {session.user.name} <br/>
-      <button onClick={() => signOut()}>Sign out</button>
+                Signed in as {session.user.name} <br/>
+                <button onClick={() => signOut()}>Sign out</button>
     </>}
                 </li>
               </ul>
-            </header>  */}
+            </header> 
     
    
     {/* <Link href="/blog/hello-world">
@@ -64,12 +64,12 @@ export default function Page({notes}) {
 }
 
 export const getServerSideProps  = async (context) => {
-     const res = await axios.get('http://localhost:3000/api/notes');
-     console.log(res.data)
+     const res = await axios.get('http://localhost:3000/api/users');
+     //console.log(res.data)
      //const {data} = await res.json();
      return {
       props: {
-        notes: res.data
+        users: res.data
       }
     }
 }

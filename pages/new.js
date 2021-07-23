@@ -1,21 +1,23 @@
 import Link from 'next/link'
 import {useState, useEffect} from 'react'
-import axios from 'axios'
+//import axios from 'axios'
 //import {Button , Form, Loader } from 'semantic-ui-react';
 import { useRouter } from 'next/router';
+import fetch from 'isomorphic-unfetch';
 
 
-const NewNote = () => {
-    const [form, setForm] = useState({title: '', description: ''});
+const NewUser = () => {
+    const [form, setForm] = useState({userName: '', password: ''});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setErrors] = useState({});
     const router = useRouter();
-console.log(form)
+//console.log(form)
 
+// need to figure out how this works VVV
     useEffect(() => {
         if (isSubmitting) {
             if (Object.keys(errors).length === 0) {
-                createNote();
+                createUser();
             }
             else {
                 setIsSubmitting(false);
@@ -23,16 +25,16 @@ console.log(form)
         }
     }, [errors]);
 
-    const createNote = async () => {
+    const createUser = async () => {
         try {
-            // const res = await fetch('http://localhost:3000/api/notes', {
-            //     method: 'POST',
-            //     headers: {
-            //         "Accept": "application/json",
-            //         "Content-Type": "application/json"
-            //     },
-            //     body: JSON.stringify(form)
-            // })
+            const res = await fetch('http://localhost:3000/api/users', {
+                method: 'POST',
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(form)
+            })
             router.push("/");
         } catch (error) {
             console.log(error);
@@ -56,19 +58,19 @@ console.log(form)
     const validate = () => {
         let err = {};
 
-        if (!form.title) {
-            err.title = 'Title is required';
+        if (!form.userName) {
+            err.userName = 'User Name is required';
         }
-        if (!form.description) {
-            err.description = 'Description is required';
+        if (!form.password) {
+            err.password = 'Password is required';
         }
 
         return err;
     }
     
 return (
-    <div className="form-container">
-        <h1>Create Note</h1>
+    <div>
+        <h1>Create User</h1>
         <div>
                 {
                     isSubmitting
@@ -76,18 +78,18 @@ return (
                         : <form onSubmit={handleSubmit}>
                             <input
                                type="text"
-                                label='Title'
-                                placeholder='Title'
-                                name='title'
+                                label='User Name'
+                                placeholder='User Name'
+                                name='userName'
                                 onChange={handleChange}
                             />
-                            <textarea
-                               
-                                label='Descriprtion'
-                                placeholder='Description'
-                                name='description'
-                               
+
+                            <input 
+                                label='Password'
+                                placeholder='Password'
+                                name='password'                             
                                 onChange={handleChange}
+                                type="password"
                             />
                             <button type='submit'>Create</button>
                         </form>
@@ -96,4 +98,4 @@ return (
     </div>
 )
 }
-export default NewNote;
+export default NewUser;

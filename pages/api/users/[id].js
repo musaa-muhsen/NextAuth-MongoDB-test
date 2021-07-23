@@ -1,5 +1,5 @@
 import dbConnect from '../../../utils/dbConnect';
-import Note from '../../../models/Note';
+import User from '../../../models/User';
 
 
 dbConnect();
@@ -14,11 +14,11 @@ export default async (req, res) => {
     switch(method) {
         case 'GET': 
            try {
-              const note = await Note.findById(id);
-              if (!note) {
+              const user = await User.findById(id);
+              if (!user) {
                   return res.status(400).json({success: false});
               }
-              res.status(200).json({success: true, data: note})
+              res.status(200).json({success: true, data: user})
            } catch (error) {
             res.status(400).json({success: false});
            }
@@ -26,15 +26,15 @@ export default async (req, res) => {
         case 'PUT':
             try {
 
-                const note = await Note.findByIdAndUpdate(id, req.body, {
+                const user = await User.findByIdAndUpdate(id, req.body, {
                     new: true,
                     runValidators: true
                 });
 
-                if (!note) {
+                if (!user) {
                     return res.status(400).json({success: false});
                 }
-                res.status(200).json({success: true, data: note})
+                res.status(200).json({success: true, data: user})
 
 
             } catch (error) {
@@ -43,9 +43,9 @@ export default async (req, res) => {
             break;
         case 'DELETE': 
            try {
-             const deletedNote = await Note.deleteOne({_id: id});
+             const deletedUser = await User.deleteOne({_id: id});
 
-             if (!deletedNote) {
+             if (!deletedUser) {
                  return res.status(400).json({success: false})
              }
              // whatever is in the .json({obj}) according to the status will get logged out

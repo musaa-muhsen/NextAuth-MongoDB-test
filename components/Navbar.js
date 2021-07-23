@@ -1,12 +1,12 @@
 import Link from 'next/link';
 
 const Navbar = () => (
-    <nav className="navbar">
+    <nav>
         <Link href="/">
-            <a className="navbar-brand">Note App</a>
+            <a>Note App</a>
         </Link>
         <Link href="/new">
-            <a className="create">Create note</a>
+            <a>Create note</a>
         </Link>
     </nav>
 )

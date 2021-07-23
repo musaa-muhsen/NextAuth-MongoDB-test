@@ -4,7 +4,7 @@ import Navbar from './Navbar';
 const Layout = ({ children }) => (
     <>
         <Head>
-            <title>Note App</title>
+            <title>from Layout.js</title>
         </Head>
         <Navbar />
         {children}
