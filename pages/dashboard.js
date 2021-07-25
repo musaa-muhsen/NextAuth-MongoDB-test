@@ -1,16 +1,9 @@
-
-// const Dashboard = () => {
-//   return (
-//     null
-//   )
-// }
-
-// export default Dashboard
 import React from 'react'
-
 import { signIn, signOut, useSession, getSession } from 'next-auth/client';
-//console.log(signIn)
 import moment from 'moment';
+import Link from 'next/link'
+import axios from 'axios';
+import styles from '../styles/Dashboard.module.scss';
 //import dynamic from 'next/dynamic'
 
 // const UnauthenticatedComponent = dynamic(() =>
@@ -20,14 +13,11 @@ import moment from 'moment';
 //   import('../components/authenticated')
 // )
 
+const Dashboard = ({dataFinal, users}) => {
 
-
-const Dashboard = ({dataFinal}) => {
     const [session, loading] = useSession();
     //console.log(session.user)
-    //console.log(session.user)
     //if (typeof window !== 'undefined' && loading) return <p>Loading...</p>
-    if (typeof window !== 'undefined' && loading) return <p>Loading...</p>
   //console.log(dataFinal)
 //   React.useEffect(async () => {
 //     console.log(session)
@@ -36,11 +26,26 @@ const Dashboard = ({dataFinal}) => {
 //  }, [])
    
   //const momentOutcome = moment(dataFinal[0].createdTime).format('DD-MM-YYYY')
+  //if (typeof window !== 'undefined' && loading) return null
 
-  //const [ session, loading ] = useSession()
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+  if (session) {
+      return <>
+  <div className={styles.navContainer}>
+   <nav>
+        <div> <Link href="/dashboard">
+            <a>All Users</a>
+        </Link></div>
+       <div>
+       <Link href="/new">
+            <a>Create User</a>
+        </Link>
+       </div>
+      
+    </nav>
 
-  return <>
-  {/* <p>Welcome, {session.user}</p> */}
     {!session && <>
       Not signed in <br/>
       <button onClick={() => signIn()}>Sign in</button>
@@ -49,13 +54,46 @@ const Dashboard = ({dataFinal}) => {
       Signed in as {session.user.name} <br/>
       <button onClick={() => signOut()}>Sign out</button>
     </>}
+    </div>
+  {/* <p>Welcome, {session.user}</p> */}
+  <div>
+        {users.data.map(user => {
+          return (
+            <div key={user._id}>
+              <section>
+                <div>
+                    {/*<Link href={`/${user._id}`}>
+                       <a>{user.userName}</a> 
+                      <a>{user.password}</a>
+                    </Link>*/}
+                    <p>user name: {user.userName}</p>
+                    <p>password: {user.password}</p>
+                    <p>database id: {user._id}</p>
+                </div>
+                <div>
+                  <Link href={`/${user._id}`}>
+                    <button>Delete</button>
+                  </Link>
+                  <Link href={`/${user._id}/edit`}>
+                    <button>Edit</button>
+                  </Link>
+                </div>
+              </section>
+            </div>
+          )
+        })}
+      </div>
+
 
   </>
+}
 }
 
 export default Dashboard
 
 export const getServerSideProps = async (context) => {
+  const resUsers = await axios.get('http://localhost:3000/api/users');
+
 
   const {google} = require('googleapis');
   const path = require('path');
@@ -68,7 +106,7 @@ export const getServerSideProps = async (context) => {
     return {}
   }
 
-  console.log('this is session', session)
+  //console.log('This is the session:', session)
 
   const CLIENT_ID = '638223286014-v1vks5ge9070m6o94eksa0upm1k2sktg.apps.googleusercontent.com',
   CLIENT_SECRET = 're2pjUAcoPenWNo0U2AZmX3O',
@@ -137,7 +175,8 @@ for (let i = 0; i < res.length; i++) {
   return {
     props: {
       dataFinal,
-      user: session
+      user: session,
+      users: resUsers.data
        //newData: getData()
     }, 
   }

@@ -1,0 +1,96 @@
+// .signInContainer {
+   
+//     flex: 1 50%;
+//     display: flex;
+//     align-items: center;
+//  justify-content: center;
+// // margin-top: 300px;
+
+// }
+
+.mainContainer {
+    height: 100vh;
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.signFormWrapper {
+    width: 250px;
+}
+
+.inputs {
+    margin-bottom: 10px;
+    width: 250px !important;
+}
+.title {
+    text-transform: uppercase;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+
+}
+
+
+.btn {
+  
+    display: block;
+
+    background: var(--black);
+    padding: 10px 0;
+    text-align: center;
+    color:var(--white);
+     border: var(--black) solid 1px; 
+    // border-radius: 50px;
+    font-size: 15px;
+    font-weight: 400;
+    text-transform: capitalize;
+    cursor: pointer;
+    //height: 50px;
+    width: 100%;
+    letter-spacing: 0 !important;
+    //transition: background-color 0.3s ease-in-out;
+    &:hover {
+        letter-spacing: 0 !important;
+        font-size: 15px !important;
+        font-weight: 400 !important;
+        border: var(--black) solid 1px; 
+// background: rgba(#232323, 0.8);
+//background-color: rgb(27, 27, 27); 
+color:var(--white);
+    }
+}
+
+
+// .imageContainer {
+
+//     flex: 1 50%;
+
+//     background-color: var(--black);
+//     overflow: hidden;
+//     background-position: center center;
+//     background-size: cover;
+//     background-repeat: no-repeat;
+//     width: 100%;
+//     min-height: 100vh;
+//     p {
+//         text-align: center;
+//         font-size: 2rem;
+//         width: 100px;
+//         margin: 10px auto;
+//     }
+// }
+
+// .header {
+//     .ulHeader {
+//         width: 95%;
+//         max-width: 1400px;
+//         margin: 30px auto;
+//         display: grid;
+//         grid-template-columns: 100px 1fr 100px;
+//         li {
+//             text-align: center;
+//         }
+//     }
+// }

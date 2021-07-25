@@ -23,7 +23,7 @@ const options = {
           const filteredUser = usersDB.data.data.filter((e,i,a) => {
             return e.userName === credentials.username && e.password === credentials.password
             });
-           console.log(filteredUser._id)
+           //console.log(filteredUser._id)
            // or !emails || emails.length === 0
             if (filteredUser.length > 0) {
               const user = { 
@@ -39,6 +39,10 @@ const options = {
         }
     }),
   ],
+  pages: {
+    signIn: "/signin",
+    error: '/signin',
+  },
   session: {
       jwt: true,
       maxAge: 30 * 24 * 60 * 60 // 30 days
@@ -55,6 +59,7 @@ const options = {
         ? Promise.resolve('/dashboard')
         : Promise.resolve(url);    
       },
+      /*
       signIn: async (user, account, profile) => {
         //console.log(user, 'this is user')
         console.log('this is the profile:', profile);
@@ -72,7 +77,7 @@ const options = {
         return token
       },
       async session(session, token) {
-        console.log('this is session & token:' ,session, token)
+        //console.log('this is session & token:' ,session, token)
         if(token?.accessToken) {
           session.accessToken = token.accessToken
         }
@@ -81,6 +86,7 @@ const options = {
         }
         return session
       }
+      */
 },
   
 
