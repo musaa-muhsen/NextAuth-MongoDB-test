@@ -6,7 +6,26 @@ import { useRouter } from 'next/router'
 import axios from 'axios';
 //import { Button, Card } from 'semantic-ui-react';
 //null, { callbackUrl: 'http://localhost:3000/dashboard' }
-export default function Page({users}) {
+
+// import dbConnect from '../utils/dbConnect';
+// import User from '../models/User';
+
+
+export default function Page({queryConverted}) {
+//   const plainData = {
+//     ...queryConverted
+//   }
+// console.log(plainData)
+
+// const data = Object.values(plainData);
+// console.log(data)
+// const filtered = data.filter((e,i,a) => {
+//   return e.userName === 'admin' && e.password === '7691769199'
+//   });
+
+// console.log(filtered)
+
+    
     const [ session, loading ] = useSession();
 
     if (loading) {
@@ -54,10 +73,15 @@ export const getServerSideProps  = async (context) => {
     // const res = await axios.get('http://localhost:3000/api/users');
      //console.log(res.data)
      //const {data} = await res.json();
+    
+      //const queryResult = await User.find({}).lean();
+     // const queryConverted = JSON.parse(JSON.stringify(queryResult));
+
+//dbConnect();
      return {
       props: {
-        
-        users: null
+        nothing: null
+        // queryConverted
       }
     }
 }
