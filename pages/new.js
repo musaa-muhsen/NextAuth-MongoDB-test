@@ -11,6 +11,7 @@ const NewUser = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setErrors] = useState({});
     const router = useRouter();
+    
 //console.log(form)
 
 // need to figure out how this works VVV
@@ -27,7 +28,7 @@ const NewUser = () => {
 
     const createUser = async () => {
         try {
-            const res = await fetch('http://localhost:3000/api/users', {
+            const res = await fetch('/api/users', {
                 method: 'POST',
                 headers: {
                     "Accept": "application/json",
@@ -35,7 +36,7 @@ const NewUser = () => {
                 },
                 body: JSON.stringify(form)
             })
-            router.push("/");
+            router.push("/dashboard");
         } catch (error) {
             console.log(error);
         }

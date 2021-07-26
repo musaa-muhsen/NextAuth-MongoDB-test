@@ -1,13 +1,17 @@
 //import fetch from 'isomorphic-unfetch'; //Switches between unfetch & node-fetch for client & server.
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-//import { Confirm, Button, Loader } from 'semantic-ui-react';
-import axios from 'axios';
+//import axios from 'axios';
+import { signIn, signOut, useSession, getSession } from 'next-auth/client';
 
-const User = ({ user }) => {
-    const [confirm, setConfirm] = useState(false);
-    const [isDeleting, setIsDeleting] = useState(false);
+const User = () => {
+
     const router = useRouter();
+    const userId = router.query.id;
+    const [userState, setUserState] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [session, loading] = useSession();
+    
 
     useEffect(() => {
         if (isDeleting) {
@@ -15,15 +19,31 @@ const User = ({ user }) => {
         }
     }, [isDeleting])
 
+    useEffect(()=>{
+        let mounted = true;
+
+        const fetchData = async () => {
+          const res = await fetch(`/api/users/${userId}`)
+          const json = await res.json()
+          setUserState(json)
+        }
+        fetchData()
+        return function cleanup() {
+            mounted = false
+           }
+      },[session])
+
+      console.log(userState);
+
 
     const deleteUser = async () => {
-        const userId = router.query.id;
+      
         try {
-            const deleted = await fetch(`http://localhost:3000/api/users/${userId}`, {
+            const deleted = await fetch(`/api/users/${userId}`, {
                 method: "Delete"
             });
 
-            router.push("/");
+            router.push("/dashboard");
         } catch (error) {
             console.log(error)
         }
@@ -35,41 +55,42 @@ const User = ({ user }) => {
 
     return (
         <div>
-            {isDeleting
-                ? <p> loading </p>
-                :
-                <>
-                    <h1>{user.data.userName}</h1>
-                    <p>{user.data.password}</p>
+          {
+              userState &&
+                 <>
+                    <h1>{userState.data.userName}</h1>
+                    <p>{userState.data.password}</p>
                     <button onClick={handleDelete}>Delete</button>
                 </>
+                
+               
             }
          
         </div>
     )
 }
 
-export const getServerSideProps  = async ({ query: { id } }) => {
+// export const getServerSideProps  = async ({ query: { id } }) => {
 
-    try {
+//     try {
 
-        const res = await axios.get(`http://localhost:3000/api/users/${id}`);
-        console.log(res.data)
-        return {
-            props: {
-              user: res.data
-            }
-          }
-    } catch(err) {
-        console.log(err)
-        return {
-            props: {
-                user: []
-            }
-        }
-    }
-    //console.log(res.data)
+//         const res = await axios.get(`http://localhost:3000/api/users/${id}`);
+//         console.log(res.data)
+//         return {
+//             props: {
+//               user: res.data
+//             }
+//           }
+//     } catch(err) {
+//         console.log(err)
+//         return {
+//             props: {
+//                 user: []
+//             }
+//         }
+//     }
+//     //console.log(res.data)
     
-}
+// }
 
 export default User;

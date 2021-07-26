@@ -2,8 +2,11 @@ import React from 'react'
 import { signIn, signOut, useSession, getSession } from 'next-auth/client';
 import moment from 'moment';
 import Link from 'next/link'
-import axios from 'axios';
+//import axios from 'axios';
 import styles from '../styles/Dashboard.module.scss';
+import { useState, useEffect } from 'react';
+import {sanityClient} from '../sanity'; 
+
 //import dynamic from 'next/dynamic'
 
 // const UnauthenticatedComponent = dynamic(() =>
@@ -13,10 +16,11 @@ import styles from '../styles/Dashboard.module.scss';
 //   import('../components/authenticated')
 // )
 
-const Dashboard = ({dataFinal, users}) => {
+const Dashboard = () => {
 
     const [session, loading] = useSession();
-    //console.log(session.user)
+    const [userState, setUserState] = useState(null);
+    //console.log(dataFinal);
     //if (typeof window !== 'undefined' && loading) return <p>Loading...</p>
   //console.log(dataFinal)
 //   React.useEffect(async () => {
@@ -26,15 +30,50 @@ const Dashboard = ({dataFinal, users}) => {
 //  }, [])
    
   //const momentOutcome = moment(dataFinal[0].createdTime).format('DD-MM-YYYY')
+
+  // When rendering client side don't display anything until loading is complete
   //if (typeof window !== 'undefined' && loading) return null
+  // Fetch content from protected route
+  useEffect(()=>{
+    let mounted = true
+
+    const fetchData = async () => {
+      try {
+      const res = await fetch('/api/users')
+      const json = await res.json()
+    
+      setUserState(json)
+    } catch (err) {
+      console.log(err)
+  }
+    }
+    fetchData()
+    return function cleanup() {
+      mounted = false
+     }
+  },[session])
+
+  //console.log(userState)
 
   if (loading) {
     return <p>Loading...</p>;
   }
+
   if (session) {
       return <>
   <div className={styles.navContainer}>
-   <nav>
+    {!session && <>
+      Not signed in <br/>
+      <button onClick={() => signIn()}>Sign in</button>
+    </>}
+    {session && <>
+      {/* Signed in as {session.user.name} <br/> */}
+      <button onClick={() => signOut()}>Sign out</button>
+    </>}
+    </div>
+  {/* <p>Welcome, {session.user}</p> */}
+
+  <nav>
         <div> <Link href="/dashboard">
             <a>All Users</a>
         </Link></div>
@@ -45,21 +84,10 @@ const Dashboard = ({dataFinal, users}) => {
        </div>
       
     </nav>
-
-    {!session && <>
-      Not signed in <br/>
-      <button onClick={() => signIn()}>Sign in</button>
-    </>}
-    {session && <>
-      Signed in as {session.user.name} <br/>
-      <button onClick={() => signOut()}>Sign out</button>
-    </>}
-    </div>
-  {/* <p>Welcome, {session.user}</p> */}
   <div>
-        {users.data.map(user => {
+  {userState && userState.data.map(user => {
           return (
-            <div key={user._id}>
+            <div style={{marginBottom: '30px'}} key={user._id}>
               <section>
                 <div>
                     {/*<Link href={`/${user._id}`}>
@@ -92,9 +120,10 @@ const Dashboard = ({dataFinal, users}) => {
 export default Dashboard
 
 export const getServerSideProps = async (context) => {
-  const resUsers = await axios.get('http://localhost:3000/api/users');
 
-
+  
+  // const resUsers = await axios.get('http://localhost:3000/api/users/');
+  // console.log('axe:', resUsers);
   const {google} = require('googleapis');
   const path = require('path');
   const fs = require('fs');
@@ -105,14 +134,27 @@ export const getServerSideProps = async (context) => {
     context.res.end()
     return {}
   }
+  console.log(session.user.name)
+  // if(!session) {
+  //   const sanityData = await sanityClient.fetch(query);
+  //   return sanityData
+  // }
+    const querySanity = `{
+    "one": *[_type == "client" && name == "${session.user.name}"],
+    "two": *[_type == "footer"]
+    }`
+  const sanity = session.user.name !== 'admin' ? await sanityClient.fetch(querySanity) : null;
+console.log(sanity);
 
-  //console.log('This is the session:', session)
 
-  const CLIENT_ID = '638223286014-v1vks5ge9070m6o94eksa0upm1k2sktg.apps.googleusercontent.com',
-  CLIENT_SECRET = 're2pjUAcoPenWNo0U2AZmX3O',
-  REDIRECT_URI = 'https://developers.google.com/oauthplayground',
-  REFRESH_TOKEN = '1//04Qb_d15fB5HjCgYIARAAGAQSNwF-L9IrGR9yR6-CuMOl2VjXEu2tRngJGMcCCxi6tCw2tuoQJPT782VRsFkQwaoYQmAT78FkvsA';
-  
+   // GOOGLE DRIVE API TEST CONTENT TOKEN NEEDS REFRESHING
+   // https://stackoverflow.com/questions/66058279/token-has-been-expired-or-revoked-google-oauth2-refresh-token-gets-expired-i
+  /*
+  const CLIENT_ID = process.env.CLIENT_ID;
+  const CLIENT_SECRET = process.env.CLIENT_SECRET;
+  const REDIRECT_URI = process.env.REDIRECT_URI;
+  const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
+
   const oauth2client = new google.auth.OAuth2(
       CLIENT_ID,
       CLIENT_SECRET,
@@ -160,8 +202,6 @@ let res = await new Promise((resolve, reject) => {
       });
 
       return result.data
-
-
     } catch (error) {
        console.log(error.message)
     }  
@@ -170,13 +210,15 @@ let res = await new Promise((resolve, reject) => {
    let dataFinal = [];
 for (let i = 0; i < res.length; i++) {
    dataFinal.push(await generatePublicUrl(res[i].id));
-} 
+}
+*/
+
 
   return {
     props: {
-      dataFinal,
-      user: session,
-      users: resUsers.data
+     // dataFinal,
+      // user: session,
+      // users: resUsers.data
        //newData: getData()
     }, 
   }

@@ -1,17 +1,16 @@
 import { signIn, signOut, useSession } from 'next-auth/client';
-import Link from 'next/link'
+//import Link from 'next/link'
 import React from 'react';
 import styles from '../styles/Home.module.scss';
-import { useRouter } from 'next/router'
-import axios from 'axios';
-//import { Button, Card } from 'semantic-ui-react';
+// import { useRouter } from 'next/router'
+// import axios from 'axios';
 //null, { callbackUrl: 'http://localhost:3000/dashboard' }
 
 // import dbConnect from '../utils/dbConnect';
 // import User from '../models/User';
 
 
-export default function Page({queryConverted}) {
+export default function Page() {
 //   const plainData = {
 //     ...queryConverted
 //   }
@@ -25,9 +24,8 @@ export default function Page({queryConverted}) {
 
 // console.log(filtered)
 
-    
     const [ session, loading ] = useSession();
-
+console.log(session)
     if (loading) {
       return <p>Loading...</p>;
     }
@@ -41,7 +39,8 @@ export default function Page({queryConverted}) {
     // });
     
 
-  return <>
+  return ( 
+        <div>
 
 
      <header className={styles.header}>
@@ -54,9 +53,9 @@ export default function Page({queryConverted}) {
                    <button onClick={() => signIn()}>Sign in</button>
                  </>}
                  {session && <>
-                Signed in as {session.user.name} <br/>
+                
                 <button onClick={() => signOut()}>Sign out</button>
-    </>}
+                   </>}
                 </li>
               </ul>
             </header> 
@@ -66,9 +65,11 @@ export default function Page({queryConverted}) {
           <a>Blog Post</a>
         </Link> */}
 
-  </>
+  </div>
+  )
 }
 
+/*
 export const getServerSideProps  = async (context) => {
     // const res = await axios.get('http://localhost:3000/api/users');
      //console.log(res.data)
@@ -85,4 +86,5 @@ export const getServerSideProps  = async (context) => {
       }
     }
 }
+*/
 

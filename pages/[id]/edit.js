@@ -3,18 +3,25 @@ import {useState, useEffect} from 'react'
 import axios from 'axios'
 //import {Button , Form, Loader } from 'semantic-ui-react';
 import { useRouter } from 'next/router';
-import fetch from 'isomorphic-unfetch';
+//import fetch from 'isomorphic-unfetch';
+import { signIn, signOut, useSession, getSession } from 'next-auth/client';
 
 
 
 const EditUser = ({user}) => {
-    
-   // console.log(user)
+    if (user) {
+        console.log(user)
+    }
+
   //const [form, setForm] = useState({})
-    const [form, setForm] = useState({userName: user.data.userName, password: user.data.password});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [userState, setUserState] = useState(null);
     const [errors, setErrors] = useState({});
     const router = useRouter();
+    const [session, loading] = useSession();
+    const [form, setForm] = useState({});
+    
+
     
 
     useEffect(() => {
@@ -30,9 +37,27 @@ const EditUser = ({user}) => {
         }
     }, [errors]);
 
+    useEffect(()=>{
+        let mounted = true;
+
+        const fetchData = async () => {
+          const res = await fetch(`/api/users/${router.query.id}`)
+          const json = await res.json()
+          setUserState(json)
+        }
+        fetchData()
+        return function cleanup() {
+            mounted = false
+           }
+      },[])
+
+
+
+    // console.log(userState)
+
     const updateUser = async () => {
         try {
-            const res = await fetch(`http://localhost:3000/api/users/${router.query.id}`, {
+            const res = await fetch(`/api/users/${router.query.id}`, {
                 method: 'PUT',
                 headers: {
                     "Accept": "application/json",
@@ -41,11 +66,12 @@ const EditUser = ({user}) => {
                 body: JSON.stringify(form)
             })
 
-            router.push("/");
+            router.push("/dashboard");
         } catch (error) {
             console.log(error);
         }
     }
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -74,13 +100,14 @@ const EditUser = ({user}) => {
 
         return err;
     }
+ 
     
+
 return (
     <div>
         <div>  {
-                    isSubmitting
-                        ? <p>loading...</p>
-                        : <form onSubmit={handleSubmit}>
+              userState &&
+                    <form onSubmit={handleSubmit}>
                             <input
                                type="text"
                                 label='User Name'
@@ -107,25 +134,28 @@ return (
 }
 export default EditUser;
 
-export const getServerSideProps  = async ({ query: { id } }) => {
-      try {
-        const res = await axios.get(`http://localhost:3000/api/users/${id}`);
-        //console.log(res.data)
-        return {
-            props: {
-              user: res.data
-            }
-          }
-    } catch(err) {
-        console.log(err)
-        return {
-            props: {
-                user: []
-            }
-        }
-    }
+/*
+export const getServerSideProps  = async (context) => {
+    console.log(context)
+    //   try {
+    //     const res = await axios.get(`http://localhost:3000/api/users/${id}`);
+    //     //console.log(res.data)
+    //     return {
+    //         props: {
+    //           user: res.data
+    //         }
+    //       }
+    // } catch(err) {
+    //     console.log(err)
+    //     return {
+    //         props: {
+    //             user: []
+    //         }
+    //     }
+    // }
 }
 
+*/
           // this is for node behavour
     //    const user = await axios({
     //         method: 'get',
@@ -135,3 +165,13 @@ export const getServerSideProps  = async ({ query: { id } }) => {
         //const res = await fetch(`http://localhost:3000/api/users/${id}`);
        // const { data } = await res.json();
         //console.log(hello)
+
+        export async function getServerSideProps(context) {
+            const session = await getSession(context);
+            console.log(session)
+            return {
+              props: {
+        
+              }
+            }
+        }

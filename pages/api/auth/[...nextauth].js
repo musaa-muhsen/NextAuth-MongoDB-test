@@ -1,10 +1,10 @@
 import NextAuth from 'next-auth'
 import Providers from 'next-auth/providers'
-import axios from 'axios'
+//import axios from 'axios'
 
 import dbConnect from '../../../utils/dbConnect';
 import User from '../../../models/User';
-dbConnect();
+
 // const refreshAccessToken = async (prevToken) => {
 //   const token = await refreshEndpoint(prevToken);
 
@@ -46,21 +46,18 @@ const options = {
          //console.log(plainData)
         
         const data = Object.values(plainData);
-       // console.log(data)
+        
         const filteredUser = data.filter((e,i,a) => {
-          return e.userName === 'admin' && e.password === '7691769199'
+          //console.log(e.userName);
+          return e.userName == credentials.username && e.password == credentials.password
           });
         
-       // console.log('filtered:' ,filteredUser);
          
            // or !emails || emails.length === 0
             if (filteredUser.length > 0) {
-              const user = { 
-                             name: {
-                              userName: filteredUser[0].userName,
-                              password: filteredUser[0].password, 
-                              _id: filteredUser[0]._id 
-                            }}
+              const user = {
+                name: filteredUser[0].userName
+              }
               return Promise.resolve(user);
             } else {
               console.log('no user')
@@ -139,10 +136,6 @@ const options = {
       }
       */
 },
-  
-
-    
-
 };
 
 export default (req, res) => NextAuth(req, res, options);
