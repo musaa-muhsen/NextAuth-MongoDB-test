@@ -76,7 +76,18 @@ const options = {
       maxAge: 30 * 24 * 60 * 60 // 30 days
   },
   callbacks: {
-  
+    async jwt(token) {
+      // Add access_token to the token right after signin
+      if (account?.accessToken) {
+        token.accessToken = account.accessToken
+      }
+      return token
+    }, async session(session, token) {
+      // Add property to session, like an access_token from a provider.
+      // so these will be created as object literials 
+      session.accessToken = token.accessToken
+      return session
+    },
     redirect: async (url, baseUrl) => {
       // if (url === '/api/auth/signin') {
       //   // if we're on this page redirect 
@@ -86,7 +97,9 @@ const options = {
         return url.startsWith(baseUrl)
         ? Promise.resolve(`${baseUrl}/dashboard`)
         : Promise.resolve(url);    
-      },  
+      }, 
+    
+       
      // async jwt(prevToken, token) {
         // Initial call
       //   if (token) {

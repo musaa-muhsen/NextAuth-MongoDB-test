@@ -1,0 +1,36 @@
+@font-face {
+    font-family: 'Meno Banner Extra Condensed';
+    src: url('/fonts/MenoBannerExtraCondensed-Light.woff2') format('woff2'),
+        url('/fonts/MenoBannerExtraCondensed-Light.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+  @font-face {
+    font-family: 'Bodoni 72 OS';
+    src: url('/fonts/BodoniBE-Regular.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'EngraversGothicBold';
+    src: url('/fonts/EngraversGothicBold.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'MillionarireScript';
+    src: url('/fonts/MillionaireScript.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: "EngraversGothicBT";
+    src: url("/fonts/EngraversGothicBT.ttf") format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }

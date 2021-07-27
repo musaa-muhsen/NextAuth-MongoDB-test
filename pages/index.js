@@ -71,7 +71,7 @@ export default function Page() {
     {/* <Link href="/blog/hello-world">
           <a>Blog Post</a>
         </Link> */}
-        <Accordion/>
+        
 
   </div>
   )
