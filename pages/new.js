@@ -4,6 +4,7 @@ import {useState, useEffect} from 'react'
 //import {Button , Form, Loader } from 'semantic-ui-react';
 import { useRouter } from 'next/router';
 import fetch from 'isomorphic-unfetch';
+import { signIn, signOut, useSession, getSession } from 'next-auth/client';
 
 
 const NewUser = () => {
@@ -11,7 +12,10 @@ const NewUser = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setErrors] = useState({});
     const router = useRouter();
-    
+    const [errorMsgUser, setErrorMsgUser] = useState(null)
+    const [errorMsgPassword,setErrorMsgPassword] = useState(null)
+    const [session, loading] = useSession();
+
 //console.log(form)
 
 // need to figure out how this works VVV
@@ -61,9 +65,11 @@ const NewUser = () => {
 
         if (!form.userName) {
             err.userName = 'User Name is required';
+            setErrorMsgUser(err.userName)
         }
         if (!form.password) {
             err.password = 'Password is required';
+            setErrorMsgPassword(err.password)
         }
 
         return err;
@@ -71,12 +77,35 @@ const NewUser = () => {
     
 return (
     <div>
+
         <h1>Create User</h1>
+        <header className={'header'}>
+              <ul className={'ulHeader'}>
+                <li>{session && <> 
+                 <Link href="/dashboard">
+                    <a>Dashboard</a>
+                 </Link>
+                 </>}
+                 </li>
+                <li></li>
+                <li>
+                {!session && <>
+                   Not signed in <br/>
+                   <button onClick={() => signIn()}>Sign in</button>
+                 </>}
+                 {session && <>
+                
+                <button onClick={() => signOut()}>Sign out</button>
+                   </>}
+                </li>
+              </ul>
+            </header> 
         <div>
                 {
                     isSubmitting
                         ? <p>loading...</p>
-                        : <form onSubmit={handleSubmit}>
+                        : <div className="form-wrapper-edit">
+                        <form className="form-container-edit" onSubmit={handleSubmit}>
                             <input
                                type="text"
                                 label='User Name'
@@ -94,6 +123,11 @@ return (
                             />
                             <button type='submit'>Create</button>
                         </form>
+                        <div>
+                            <p>{errorMsgUser }</p> 
+                            <p>{errorMsgPassword }</p> 
+                            </div>
+                            </div>
                 }
             </div>
     </div>

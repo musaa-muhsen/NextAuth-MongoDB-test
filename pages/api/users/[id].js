@@ -66,7 +66,7 @@ export default async (req, res) => {
 
     } else {
     // Not Signed in
-    res.status(401).json({message: 'not authed'})
+    res.status(401).json({message: 'No Access!'})
 
     }
 

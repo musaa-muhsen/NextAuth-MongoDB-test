@@ -6,6 +6,13 @@ import Link from 'next/link'
 import styles from '../styles/Dashboard.module.scss';
 import { useState, useEffect } from 'react';
 import {sanityClient} from '../sanity'; 
+//import {fetch as isoFetch} from 'isomorphic-unfetch';
+//import fetch from 'isomorphic-unfetch';
+
+import useSWR from 'swr'
+import fetch from 'unfetch';
+
+
 
 //import dynamic from 'next/dynamic'
 
@@ -19,7 +26,13 @@ import {sanityClient} from '../sanity';
 const Dashboard = () => {
 
     const [session, loading] = useSession();
-    const [userState, setUserState] = useState(null);
+    const [userState, setUserState] = useState('');
+    const fetcher = (url) => fetch(url).then((res) => res.json());
+    const { data, error } = useSWR('/api/users', fetcher)
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
     //console.log(dataFinal);
     //if (typeof window !== 'undefined' && loading) return <p>Loading...</p>
   //console.log(dataFinal)
@@ -34,49 +47,61 @@ const Dashboard = () => {
   // When rendering client side don't display anything until loading is complete
   //if (typeof window !== 'undefined' && loading) return null
   // Fetch content from protected route
-  useEffect(()=>{
-    let mounted = true
+  // if (session.data.name === 'admin') {
+  //   console.log('ello')
 
-    const fetchData = async () => {
-      try {
-      const res = await fetch('/api/users')
-      const json = await res.json()
+  // }
+//  if(session.user.name === 'admin') {
+//   console.log('ello')
+//   }
+
+
+  if (session.user.name == 'admin') {
+
+  // useEffect(()=>{
+  //   let mounted = true
+
+  //   const fetchData = async () => {
+  //     try {
+  //     const res = await fetch('/api/users')
+  //     const json = await res.json()
     
-      setUserState(json)
-    } catch (err) {
-      console.log(err)
-  }
-    }
-    fetchData()
-    return function cleanup() {
-      mounted = false
-     }
-  },[session])
+  //     setUserState(json)
+  //   } catch (err) {
+  //     console.log(err)
+  // }
+  //   }
+  //   fetchData()
+  //   return function cleanup() {
+  //     mounted = false
+  //    }
+  // },[session])
+  
+return <>
+     <header className={styles.header}>
+              <ul className={styles.ulHeader}>
+                <li>{session && <> 
+                 <Link href="/">
+                    <a>home</a>
+                 </Link>
+                 </>}
+                 </li>
+                <li></li>
+                <li>
+                {!session && <>
+                   Not signed in <br/>
+                   <button onClick={() => signIn()}>Sign in</button>
+                 </>}
+                 {session && <>
+                
+                <button onClick={() => signOut()}>Sign out</button>
+                   </>}
+                </li>
+              </ul>
+            </header> 
 
-  //console.log(userState)
-
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  if (session) {
-      return <>
-  <div className={styles.navContainer}>
-    {!session && <>
-      Not signed in <br/>
-      <button onClick={() => signIn()}>Sign in</button>
-    </>}
-    {session && <>
-      {/* Signed in as {session.user.name} <br/> */}
-      <button onClick={() => signOut()}>Sign out</button>
-    </>}
-    </div>
-  {/* <p>Welcome, {session.user}</p> */}
-
-  <nav>
-        <div> <Link href="/dashboard">
-            <a>All Users</a>
-        </Link></div>
+    {/* <p>Welcome, {session.user}</p> */}
+    <nav style={{marginBottom: '50px'}}>
        <div>
        <Link href="/new">
             <a>Create User</a>
@@ -85,7 +110,7 @@ const Dashboard = () => {
       
     </nav>
   <div>
-  {userState && userState.data.map(user => {
+  {data && data.data.map(user => {
           return (
             <div style={{marginBottom: '30px'}} key={user._id}>
               <section>
@@ -110,10 +135,24 @@ const Dashboard = () => {
             </div>
           )
         })}
+
       </div>
 
 
   </>
+} // end of if statement 
+
+if (session !== 'admin') {
+  return (
+    <>
+     
+     {session && <>
+      <p> Signed in as {session.user.name} </p>
+      <button onClick={() => signOut()}>Sign out</button>
+    </>}
+    </>
+  
+  )
 }
 }
 
@@ -121,30 +160,42 @@ export default Dashboard
 
 export const getServerSideProps = async (context) => {
 
-  
-  // const resUsers = await axios.get('http://localhost:3000/api/users/');
+  //const resUsers = await isoFetch('http://localhost:3000/api/users/');
+ 
+
+  //console.log(resUsers);
   // console.log('axe:', resUsers);
   const {google} = require('googleapis');
   const path = require('path');
   const fs = require('fs');
 
-  const session = await getSession(context)
+  const session = await getSession(context);
+
   if (!session) {
     context.res.writeHead(302, { Location: '/' })
     context.res.end()
     return {}
   }
-  console.log(session.user.name)
-  // if(!session) {
-  //   const sanityData = await sanityClient.fetch(query);
-  //   return sanityData
+
+  // if (session) {
+  //   fetch('http://localhost:3000/api/users')
+  //   .then( r => r.json() )
+  //   .then( data => {
+  //     console.log(data);
+  //   });
   // }
+
+  //important to return only result, not Promise
+//const fetcher = (url) => fetch(url).then((res) => res.json());
+  // const { data, error } = useSWR('/api/users');
+  // console.log('userSWR:', data);
+
     const querySanity = `{
     "one": *[_type == "client" && name == "${session.user.name}"],
     "two": *[_type == "footer"]
     }`
   const sanity = session.user.name !== 'admin' ? await sanityClient.fetch(querySanity) : null;
-console.log(sanity);
+  console.log("sanity data:",sanity);
 
 
    // GOOGLE DRIVE API TEST CONTENT TOKEN NEEDS REFRESHING
@@ -217,7 +268,7 @@ for (let i = 0; i < res.length; i++) {
   return {
     props: {
      // dataFinal,
-      // user: session,
+      user: null,
       // users: resUsers.data
        //newData: getData()
     }, 

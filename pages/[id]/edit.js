@@ -1,28 +1,41 @@
 import Link from 'next/link'
 import {useState, useEffect} from 'react'
 import axios from 'axios'
-//import {Button , Form, Loader } from 'semantic-ui-react';
 import { useRouter } from 'next/router';
 //import fetch from 'isomorphic-unfetch';
 import { signIn, signOut, useSession, getSession } from 'next-auth/client';
 
+import useSWR from 'swr'
+//import fetch from 'unfetch';
+
+const EditUser = () => {
 
 
-const EditUser = ({user}) => {
-    if (user) {
-        console.log(user)
-    }
 
   //const [form, setForm] = useState({})
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [userState, setUserState] = useState(null);
+    const [userState, setUserState] = useState({});
     const [errors, setErrors] = useState({});
     const router = useRouter();
     const [session, loading] = useSession();
+    const [errorMsgUser, setErrorMsgUser] = useState(null)
+    const [errorMsgPassword,setErrorMsgPassword] = useState(null)
+    //const fetcher = (url) => fetch(url).then((res) => res.json());
+    //const { data, error } = useSWR(`/api/users/${router.query.id}`, fetcher)
+    const fetcher = (...args) => fetch(...args).then(res => res.json());
+
+    //const initialData = props.data
+    const { data } = useSWR(`/api/users/${router.query.id}`, fetcher)
+  
+    //const initialState = userState !== undefined ? {userName: userState.data.userName, password: data.data.password} : {};
+    //const initialState = data && {userName: data.data.userName, password: data.data.password};
+    //console.log(initialState)
     const [form, setForm] = useState({});
     
+    // useEffect(() => {
+    //     setUserState(data)
 
-    
+    // }, [session])
 
     useEffect(() => {
         if (isSubmitting) {
@@ -37,19 +50,21 @@ const EditUser = ({user}) => {
         }
     }, [errors]);
 
-    useEffect(()=>{
-        let mounted = true;
+    // useEffect(()=>{
+    //     let mounted = true;
 
-        const fetchData = async () => {
-          const res = await fetch(`/api/users/${router.query.id}`)
-          const json = await res.json()
-          setUserState(json)
-        }
-        fetchData()
-        return function cleanup() {
-            mounted = false
-           }
-      },[])
+    //     const fetchData = async () => {
+    //       const res = await fetch(`/api/users/${router.query.id}`)
+    //       const json = await res.json()
+    //       setUserState(json)
+    //     }
+    //     fetchData()
+    //     return function cleanup() {
+    //         mounted = false
+    //        }
+    //   },[])
+
+   
 
 
 
@@ -92,10 +107,11 @@ const EditUser = ({user}) => {
 
         if (!form.userName) {
             err.userName = 'User name is required';
-            console.log(err.userName)
+            setErrorMsgUser(err.userName)
         }
         if (!form.password) {
             err.password = 'Password is required';
+            setErrorMsgPassword(err.password)
         }
 
         return err;
@@ -105,9 +121,31 @@ const EditUser = ({user}) => {
 
 return (
     <div>
-        <div>  {
-              userState &&
-                    <form onSubmit={handleSubmit}>
+
+     <header className={'header'}>
+              <ul className={'ulHeader'}>
+                <li>{session && <> 
+                 <Link href="/dashboard">
+                    <a>Dashboard</a>
+                 </Link>
+                 </>}
+                 </li>
+                <li></li>
+                <li>
+                {!session && <>
+                   Not signed in <br/>
+                   <button onClick={() => signIn()}>Sign in</button>
+                 </>}
+                 {session && <>
+                
+                <button onClick={() => signOut()}>Sign out</button>
+                   </>}
+                </li>
+              </ul>
+            </header> 
+        <div className={'form-wrapper-edit'}>  
+
+                    <form className={'form-container-edit'} onSubmit={handleSubmit}>
                             <input
                                type="text"
                                 label='User Name'
@@ -118,6 +156,7 @@ return (
                             />
 
                             <input   
+                            
                                 label='Password'
                                 placeholder='Password'
                                 name='password'                             
@@ -125,15 +164,23 @@ return (
                                 value={form.password}
                                 type="password"
                             />
-                            <button type='submit'>Create</button>
+                            <button type='submit'>Edit</button>
                         </form>
-                }
+                       <p>{errorMsgUser }</p> 
+                       <p>{errorMsgPassword }</p> 
+                
             </div>
     </div>
 )
 }
 export default EditUser;
 
+// export async function getServerSideProps() {
+//     const fetcher = (...args) => fetch(...args).then(res => res.json());
+
+//     const data = await fetcher('http://localhost:3000/api/users')
+//     return { props: { data } }
+//   }
 /*
 export const getServerSideProps  = async (context) => {
     console.log(context)

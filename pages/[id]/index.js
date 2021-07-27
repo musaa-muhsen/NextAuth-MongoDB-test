@@ -3,9 +3,11 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 //import axios from 'axios';
 import { signIn, signOut, useSession, getSession } from 'next-auth/client';
+import useSWR from 'swr';
+import Link from 'next/link'
 
-const User = () => {
-
+const User = ({userIdz}) => {
+console.log(userIdz);
     const router = useRouter();
     const userId = router.query.id;
     const [userState, setUserState] = useState(null);
@@ -19,22 +21,31 @@ const User = () => {
         }
     }, [isDeleting])
 
-    useEffect(()=>{
-        let mounted = true;
+    // useEffect(()=>{
+    //     let mounted = true;
 
-        const fetchData = async () => {
-          const res = await fetch(`/api/users/${userId}`)
-          const json = await res.json()
-          setUserState(json)
-        }
-        fetchData()
-        return function cleanup() {
-            mounted = false
-           }
-      },[session])
+    //     const fetchData = async () => {
+    //       const res = await fetch(`/api/users/${userId}`)
+    //       const json = await res.json()
+    //       setUserState(json)
+    //     }
+    //     fetchData()
+    //     return function cleanup() {
+    //         mounted = false
+    //        }
+    //   },[session])
 
-      console.log(userState);
+    //   console.log(userState);
+    //const fetcher = (...args) => fetch(...args).then(res => res.json());
+    const fetcher = (url) => fetch(url).then((res) => res.json());
 
+    const { data } = useSWR(`/api/users/${userIdz}`, fetcher);
+    console.log(data)
+    useEffect(() => {
+        setUserState(data)
+    }, [])
+  
+  
 
     const deleteUser = async () => {
       
@@ -52,45 +63,64 @@ const User = () => {
     const handleDelete = async () => {
         setIsDeleting(true);
     }
-
+console.log(userState)
     return (
         <div>
-          {
-              userState &&
-                 <>
-                    <h1>{userState.data.userName}</h1>
-                    <p>{userState.data.password}</p>
+               <header className={'header'}>
+              <ul className={'ulHeader'}>
+                <li>{session && <> 
+                 <Link href="/dashboard">
+                    <a>Dashboard</a>
+                 </Link>
+                 </>}
+                 </li>
+                <li></li>
+                <li>
+                {!session && <>
+                   Not signed in <br/>
+                   <button onClick={() => signIn()}>Sign in</button>
+                 </>}
+                 {session && <>
+                
+                <button onClick={() => signOut()}>Sign out</button>
+                   </>}
+                </li>
+              </ul>
+            </header> 
+          {userState && <p>Delete {userState.data.userName}</p>}
+                 <>      
                     <button onClick={handleDelete}>Delete</button>
                 </>
-                
-               
-            }
-         
+           
         </div>
     )
 }
 
-// export const getServerSideProps  = async ({ query: { id } }) => {
+export const getServerSideProps  = async ({ query: { id } }) => {
+console.log(id);
+    // try {
 
-//     try {
-
-//         const res = await axios.get(`http://localhost:3000/api/users/${id}`);
-//         console.log(res.data)
-//         return {
-//             props: {
-//               user: res.data
-//             }
-//           }
-//     } catch(err) {
-//         console.log(err)
-//         return {
-//             props: {
-//                 user: []
-//             }
-//         }
-//     }
-//     //console.log(res.data)
-    
-// }
+    //     const res = await fetch(`http://localhost:3000/api/users/${id}`);
+    //     console.log(res.data)
+    //     return {
+    //         props: {
+    //           user: res.data
+    //         }
+    //       }
+    // } catch(err) {
+    //     console.log(err)
+    //     return {
+    //         props: {
+    //             user: []
+    //         }
+    //     }
+    // }
+    //console.log(res.data)
+    return {
+        props: {
+          userIdz: id
+        }
+      }
+}
 
 export default User;

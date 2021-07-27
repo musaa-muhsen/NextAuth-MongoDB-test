@@ -1,5 +1,5 @@
-import { signIn, signOut, useSession } from 'next-auth/client';
-//import Link from 'next/link'
+import { signIn, signOut, useSession,getSession } from 'next-auth/client';
+import Link from 'next/link'
 import React from 'react';
 import styles from '../styles/Home.module.scss';
 // import { useRouter } from 'next/router'
@@ -25,7 +25,7 @@ export default function Page() {
 // console.log(filtered)
 
     const [ session, loading ] = useSession();
-console.log(session)
+
     if (loading) {
       return <p>Loading...</p>;
     }
@@ -45,7 +45,12 @@ console.log(session)
 
      <header className={styles.header}>
               <ul className={styles.ulHeader}>
-                <li>Menu</li>
+                <li>{session && <> 
+                 <Link href="/dashboard">
+                    <a>Dashboard</a>
+                 </Link>
+                 </>}
+                 </li>
                 <li></li>
                 <li>
                 {!session && <>
@@ -69,7 +74,7 @@ console.log(session)
   )
 }
 
-/*
+
 export const getServerSideProps  = async (context) => {
     // const res = await axios.get('http://localhost:3000/api/users');
      //console.log(res.data)
@@ -79,12 +84,12 @@ export const getServerSideProps  = async (context) => {
      // const queryConverted = JSON.parse(JSON.stringify(queryResult));
 
 //dbConnect();
+
      return {
       props: {
-        nothing: null
-        // queryConverted
+
       }
     }
 }
-*/
+
 

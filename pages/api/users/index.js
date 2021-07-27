@@ -9,7 +9,7 @@ export default async (req, res) => {
     if (session) {
         const {method} = req;
         //console.log(method) // post or get method 
-    
+        if (session.user.name === 'admin') {
         switch(method) {
             case "GET": 
               try {
@@ -33,8 +33,11 @@ export default async (req, res) => {
            break;
         }
     } else {
+        res.status(401).json({message: 'No Access!'})
+    }
+    } else {
         // Not Signed in
-        res.status(401).json({message: 'No Access'})
+        res.status(401).json({message: 'No Access!'})
     
     }
    

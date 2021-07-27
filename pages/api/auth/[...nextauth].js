@@ -56,7 +56,8 @@ const options = {
            // or !emails || emails.length === 0
             if (filteredUser.length > 0) {
               const user = {
-                name: filteredUser[0].userName
+                name: filteredUser[0].userName,
+                email: filteredUser[0]._id
               }
               return Promise.resolve(user);
             } else {
@@ -83,7 +84,7 @@ const options = {
       // }
         // startsWith is 
         return url.startsWith(baseUrl)
-        ? Promise.resolve('/dashboard')
+        ? Promise.resolve(`${baseUrl}/dashboard`)
         : Promise.resolve(url);    
       },  
      // async jwt(prevToken, token) {
@@ -114,27 +115,28 @@ const options = {
          debugger;
         return true;
       },
-      async jwt(token, user, account, profile, isNewUser) {
-        //console.log(token, user, account, profile, isNewUser)
-        if (account?.accessToken) {
-          token.accessToken = account.accessToken
-        }
-        if (user?.roles) {
-          token.roles = user.roles
-        }
-        return token
-      },
-      async session(session, token) {
-        //console.log('this is session & token:' ,session, token)
-        if(token?.accessToken) {
-          session.accessToken = token.accessToken
-        }
-        if (token?.roles) {
-          session.user.roles = token.roles
-        }
-        return session
-      }
       */
+      // async jwt(token, user, account, profile, isNewUser) {
+      //   //console.log(token, user, account, profile, isNewUser)
+      //   if (account?.accessToken) {
+      //     token.accessToken = account.accessToken
+      //   }
+      //   if (user?.roles) {
+      //     token.roles = user.roles
+      //   }
+      //   return token
+      // },
+      // async session(session, token) {
+      //   //console.log('this is session & token:' ,session, token)
+      //   if(token?.accessToken) {
+      //     session.accessToken = token.accessToken
+      //   }
+      //   if (token?.roles) {
+      //     session.user.roles = token.roles
+      //   }
+      //   return session
+      // }
+      
 },
 };
 
