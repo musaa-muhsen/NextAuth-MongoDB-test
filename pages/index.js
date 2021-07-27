@@ -1,6 +1,7 @@
 import { signIn, signOut, useSession,getSession } from 'next-auth/client';
 import Link from 'next/link'
 import React from 'react';
+import Accordion from '../components/Accordion';
 import styles from '../styles/Home.module.scss';
 // import { useRouter } from 'next/router'
 // import axios from 'axios';
@@ -23,6 +24,7 @@ export default function Page() {
 //   });
 
 // console.log(filtered)
+
 
     const [ session, loading ] = useSession();
 
@@ -69,6 +71,7 @@ export default function Page() {
     {/* <Link href="/blog/hello-world">
           <a>Blog Post</a>
         </Link> */}
+        <Accordion/>
 
   </div>
   )

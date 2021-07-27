@@ -8,6 +8,8 @@ dbConnect();
 export default async (req, res) => {
     const session = await getSession({ req });
     if (session) {
+
+        if (session.user.name === 'admin') {
         console.log('Session', JSON.stringify(session, null, 2));
         const {
             // id is referencing /3837373 etc 
@@ -61,6 +63,11 @@ export default async (req, res) => {
                break;
                default:
                res.status(400).json({success: false}) 
+    
+        }
+    } else {
+        // Not Signed in
+        res.status(401).json({message: 'No Access!'})
     
         } 
 
