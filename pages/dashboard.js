@@ -57,6 +57,7 @@ const Dashboard = () => {
 
 
   if (session.user.name == 'admin') {
+    console.log()
 
   // useEffect(()=>{
   //   let mounted = true
@@ -170,6 +171,8 @@ export const getServerSideProps = async (context) => {
   const fs = require('fs');
 
   const session = await getSession(context);
+  //console.log('SESSION', session);
+  //console.log(context);
 
   if (!session) {
     context.res.writeHead(302, { Location: '/' })
@@ -189,7 +192,7 @@ export const getServerSideProps = async (context) => {
 //const fetcher = (url) => fetch(url).then((res) => res.json());
   // const { data, error } = useSWR('/api/users');
   // console.log('userSWR:', data);
-
+    
     const querySanity = `{
     "one": *[_type == "client" && name == "${session.user.name}"],
     "two": *[_type == "footer"]

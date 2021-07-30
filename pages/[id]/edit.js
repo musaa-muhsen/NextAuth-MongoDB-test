@@ -28,9 +28,9 @@ const EditUser = () => {
     const { data } = useSWR(`/api/users/${router.query.id}`, fetcher)
   
     //const initialState = userState !== undefined ? {userName: userState.data.userName, password: data.data.password} : {};
-    //const initialState = data && {userName: data.data.userName, password: data.data.password};
-    //console.log(initialState)
-    const [form, setForm] = useState({});
+    const initialState = data == undefined ? {} : {userName: data.data.userName, password: data.data.password};
+    console.log(initialState)
+    const [form, setForm] = useState(initialState);
     
     // useEffect(() => {
     //     setUserState(data)

@@ -5,16 +5,17 @@ import Providers from 'next-auth/providers'
 import dbConnect from '../../../utils/dbConnect';
 import User from '../../../models/User';
 
-// const refreshAccessToken = async (prevToken) => {
-//   const token = await refreshEndpoint(prevToken);
+const refreshAccessToken = async (prevToken) => {
+ 
+  const token = await prevToken;
 
-//   // Do what you want
+  // Do what you want
 
-//   return {
-//     accessToken: token.accessToken,
-//     accessTokenExpires: Date.now() + token.expiresIn * 1000,
-//   };
-// }
+  return {
+    accessToken: token.accessToken,
+    accessTokenExpires: Date.now() + token.expiresIn * 1000,
+  };
+}
 
 
 const options = {
@@ -57,7 +58,7 @@ const options = {
             if (filteredUser.length > 0) {
               const user = {
                 name: filteredUser[0].userName,
-                email: filteredUser[0]._id
+                DB_id: filteredUser[0]._id
               }
               return Promise.resolve(user);
             } else {
@@ -73,21 +74,48 @@ const options = {
   },
   session: {
       jwt: true,
-      maxAge: 30 * 24 * 60 * 60 // 30 days
+      //maxAge: 30 * 24 * 60 * 60 // 30 days
   },
   callbacks: {
-    async jwt(token) {
-      // Add access_token to the token right after signin
-      if (account?.accessToken) {
-        token.accessToken = account.accessToken
+      jwt: async (token, user, account, profile, isNewUser) => {
+      // console.log('JWT')
+      // if (account?.accessToken) {
+      //   console.log('account:',account.accessToken);
+      // } else {
+      //   console.log(account)
+      // }
+      
+      // console.log('token:',token);
+      //console.log('user:',user);
+      // const isSignIn = (user) ? true : false
+      // // Add auth_time to token on signin in
+      // if (isSignIn) { token.auth_time = Math.floor(Date.now() / 1000) }
+      // return Promise.resolve(token)
+      //user && user.DB_id
+      if (user?.DB_id) {
+        token.id = user.DB_id
       }
       return token
-    }, async session(session, token) {
-      // Add property to session, like an access_token from a provider.
-      // so these will be created as object literials 
-      session.accessToken = token.accessToken
-      return session
     },
+    session: async (session, token) => {
+      // console.log('here2');
+      // console.log(token);
+      // console.log(session);
+      // if (!session?.user || !token?.account) {
+      //   return session
+      // }
+  
+      // session.user.id = token.account.id
+      // session.accessToken = token.account.accessToken
+      session.DB_id = token.id
+      //return session;
+  
+      return Promise.resolve(session)
+    },
+     
+   
+
+     
     redirect: async (url, baseUrl) => {
       // if (url === '/api/auth/signin') {
       //   // if we're on this page redirect 
@@ -98,29 +126,7 @@ const options = {
         ? Promise.resolve(`${baseUrl}/dashboard`)
         : Promise.resolve(url);    
       }, 
-    
-       
-     // async jwt(prevToken, token) {
-        // Initial call
-      //   if (token) {
-      //     return {
-      //       accessToken: token.accessToken,
-      //       // Assuming you can get the expired time from the API you are using
-      //       // If not you can set this value manually
-      //       accessTokenExpires: Date.now() + token.expiresIn * 1000,
-      //     };
-      //   }
-    
-      //   // Subsequent calls
-      //   // Check if the expired time set has passed
-      //   if (Date.now() < prevToken.accessTokenExpires) {
-      //     // Return previous token if still valid
-      //     return prevToken;
-      //   }
-    
-      //   // Refresh the token in case time has passed
-      //   return refreshAccessToken(prevToken);
-      // },
+      
       /*
       signIn: async (user, account, profile) => {
         //console.log(user, 'this is user')
@@ -129,28 +135,58 @@ const options = {
         return true;
       },
       */
-      // async jwt(token, user, account, profile, isNewUser) {
-      //   //console.log(token, user, account, profile, isNewUser)
-      //   if (account?.accessToken) {
-      //     token.accessToken = account.accessToken
-      //   }
-      //   if (user?.roles) {
-      //     token.roles = user.roles
-      //   }
-      //   return token
-      // },
-      // async session(session, token) {
-      //   //console.log('this is session & token:' ,session, token)
-      //   if(token?.accessToken) {
-      //     session.accessToken = token.accessToken
-      //   }
-      //   if (token?.roles) {
-      //     session.user.roles = token.roles
-      //   }
-      //   return session
-      // }
+  
       
-},
-};
+
+
+} // end of callback
+} // end of options 
 
 export default (req, res) => NextAuth(req, res, options);
+
+/*
+(node:70666) UnhandledPromiseRejectionWarning: TypeError: payload must be an object
+    at Object.module.exports [as sign] (/Users/musaa/Documents/work/auth-test2/node_modules/jose/lib/jwt/sign.js:61:11)
+    at Object.encode (/Users/musaa/Documents/work/auth-test2/node_modules/next-auth/dist/lib/jwt.js:42:41)
+    at Object.callback (/Users/musaa/Documents/work/auth-test2/node_modules/next-auth/dist/server/routes/callback.js:318:37)
+    at runMicrotasks (<anonymous>)
+    at processTicksAndRejections (internal/process/task_queues.js:95:5)
+(node:70666) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 10)
+*/
+
+/*
+async jwt(prevToken, token) {
+        console.log('prevToken:',prevToken)
+        console.log('token:',token)
+        console.log('token.accessToken:',token.accessToken)
+        //Initial call
+        if (token) {
+          return {
+            accessToken: token.accessToken,
+            // Assuming you can get the expired time from the API you are using
+            // If not you can set this value manually
+            accessTokenExpires: Date.now() + token.expiresIn * 1000,
+          };
+        }
+    
+        // Subsequent calls
+        // Check if the expired time set has passed
+        if (Date.now() < prevToken.accessTokenExpires) {
+          // Return previous token if still valid
+          return prevToken;
+        }
+       // Refresh the token in case time has passed
+        return refreshAccessToken(prevToken);
+      },
+*/
+
+  // async jwt( profile) {
+          //console.log()
+        // when returned true 
+        // console.log("token:",token) // token: { name: 'admin', email: '60fedb5387987a2238336968',picture: undefined, sub: undefined }
+        // console.log("user:",user)// { name: 'admin', email: '60fedb5387987a2238336968' }
+        // console.log("account:",account) // account: { id: 'credentials', type: 'credentials' }
+        // console.log("profile:",profile)// profile: { name: 'admin', email: '60fedb5387987a2238336968' }
+        // console.log("isNewUser:",isNewUser) // false
+       //  return profile
+     // },

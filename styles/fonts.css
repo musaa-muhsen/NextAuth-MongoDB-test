@@ -6,31 +6,3 @@
     font-style: normal;
     font-display: swap;
 }
-
-  @font-face {
-    font-family: 'Bodoni 72 OS';
-    src: url('/fonts/BodoniBE-Regular.woff') format('woff');
-    font-weight: bold;
-    font-style: normal;
-  }
-  
-  @font-face {
-    font-family: 'EngraversGothicBold';
-    src: url('/fonts/EngraversGothicBold.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
-  }
-  
-  @font-face {
-    font-family: 'MillionarireScript';
-    src: url('/fonts/MillionaireScript.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
-  }
-  
-  @font-face {
-    font-family: "EngraversGothicBT";
-    src: url("/fonts/EngraversGothicBT.ttf") format('truetype');
-    font-weight: normal;
-    font-style: normal;
-  }

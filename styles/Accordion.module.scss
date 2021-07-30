@@ -15,13 +15,15 @@
   .item {
     //background: lightgrey;
     margin-bottom: 5px;
-    padding: 20px 0px;
+   // padding: 20px 0px;
     border-bottom: 1px solid black;
   }
   .title {
-       font-family: $Meno;
-      font-size: 6rem;
+       font-family: var(--MenoBannerExtraCondensedLight);
+      //font-size: 6rem;
       font-weight: 100;
+      //background: lightgrey;
+      overflow: hidden;
     //color: blue;
     display: flex;
     justify-content: space-between;
@@ -35,6 +37,7 @@
     max-height: 0;
     overflow: hidden;
     transition: all 0.5s cubic-bezier(0,1,0,1);
+    //background: red;
   }
   
   .content.show {
@@ -42,3 +45,23 @@
     max-height: 9999px;
     transition: all 0.5s cubic-bezier(1,0,1,0);
   }
+.projectLink {
+  margin-bottom: 10px;
+  font-size: 2rem;
+  span:nth-child(2) {
+    text-transform: uppercase;
+  }
+  span {
+  }
+}
+.projectLinkContainer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.helNueCon {
+  text-transform: uppercase;
+
+  font-size: 1rem !important;
+  font-family: var(--HelveticaNeueCondensedBold);
+}

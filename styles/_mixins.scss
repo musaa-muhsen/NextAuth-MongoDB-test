@@ -1,78 +1,4 @@
-// Media Queries
-$mq-desktop-xl: 1680px;
-$mq-desktop: 1382px;
-$mq-desktop-small: 1280px;
-$mq-tablet-landscape: 1024px;
-$mq-tablet-portrait: 768px;
-$mq-mobile-landscape: 520px;
-$mq-mobile-portrait: 320px;
-// Don't change these !!
-$mq-desktop-xl-up: ($mq-desktop-xl);
-$mq-desktop-up: ($mq-desktop + 1);
-$mq-tablet-landscape-up: ($mq-tablet-landscape + 1);
-$mq-tablet-portrait-up: ($mq-tablet-portrait + 1);
-// All XL screens
-$xl-desktop-and-up: "(min-width : #{$mq-desktop-xl-up})";
-// Everything larger than a regular desktop
-$desktop-and-up: "(min-width : #{$mq-desktop-up})";
-// Everything larger than a landscape tablet
-$tablet-landscape-and-up: "(min-width : #{$mq-tablet-landscape-up})";
-// Everything larger than a portrait tablet
-$tablet-portrait-and-up: "(min-width : #{$mq-tablet-portrait-up})";
-// Everything smaller than small desktop
-$small-desktop-and-below: "(max-width : #{$mq-desktop-small})";
-// Everything smaller than tablet landscape
-$tablet-landscape-and-below: "(max-width : #{$mq-tablet-landscape})";
-// Everything below and including the portrait width of the tablet
-$tablet-portrait-and-below: "(max-width : #{$mq-tablet-portrait})";
-// Landscape tablet and short
-$landscape-short: "(max-width : #{$mq-tablet-landscape}) and (min-aspect-ratio: 16/11) and (orientation: landscape)";
-// Both mobile portrait and landscape
-$mobile-only: "(max-width : #{$mq-mobile-landscape})";
-// Just mobile landscape
-$mobile-landscape-and-below: "(max-width: #{$mq-mobile-landscape})";
-// Just mobile portrait
-$mobile-portrait-and-below: "(max-width: #{$mq-mobile-portrait})";
-$mobile-up: "(min-width : #{$mq-mobile-landscape})";
-// -----------------------------------------
 
-$engravers-gothic-bold: "EngraversGothicBold", sans-serif;
-$bodoni72: "Bodoni 72 OS", sans-serif;
-$millionarire-script: "MillionarireScript", cursive;
-$engravers-gothic-bt: "EngraversGothicBT", serif;
-$Meno: "Meno Banner Extra Condensed", sans-serif; 
-
-$primary: #e4cec7;
-$black: #0d0d0d;
-$white: #ffffff;
-$dark: #171717;
-
-.millonarireScript {
-    font-family: $millionarire-script;
-}
-
-.bodoni72os {
-    font-family: $bodoni72;
-}
-
-.engraveersGothicBold {
-    font-family: $engravers-gothic-bold;
-    letter-spacing: 1px;
-}
-
-.engraversGothicBt {
-    font-family: $engravers-gothic-bt;
-    letter-spacing: 1px;
-}
-// .menoBannerExtraCondensedLight {
-//     font-family: $_32489;
-// }
-
-@mixin forDesktop {
-    @media only screen and #{$tablet-portrait-and-up} {
-        @content;
-    }
-}
 
 @mixin onLandscape {
     @media screen and (orientation: landscape) {
@@ -81,7 +7,7 @@ $dark: #171717;
 }
 
 
-@mixin scrollbars($size, $foreground-color, $background-color: mix($foreground-color, white,  50%)) {
+@mixin scrollbars($size, $foreground-color, $background-color: mix($foreground-color, #fff,  50%)) {
     // For Google Chrome
     &::-webkit-scrollbar {
       width:  $size;
