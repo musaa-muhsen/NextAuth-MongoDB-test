@@ -41,10 +41,15 @@ export default function Page() {
     // });
     
 
-  return ( 
-        <div>
-
-
+  return (<> 
+  <style jsx global>
+  {`
+      body {
+          background: #fff;
+       }
+   `}
+</style>
+  <div>
      <header className={styles.header}>
               <ul className={styles.ulHeader}>
                 <li>{session && <> 
@@ -56,12 +61,11 @@ export default function Page() {
                 <li></li>
                 <li>
                 {!session && <>
-                   Not signed in <br/>
-                   <button onClick={() => signIn()}>Sign in</button>
+                   <p onClick={() => signIn()}>Sign In</p>
                  </>}
                  {session && <>
                 
-                <button onClick={() => signOut()}>Sign out</button>
+                <p onClick={() => signOut()}>Sign Out</p>
                    </>}
                 </li>
               </ul>
@@ -74,6 +78,7 @@ export default function Page() {
         
 
   </div>
+  </>
   )
 }
 

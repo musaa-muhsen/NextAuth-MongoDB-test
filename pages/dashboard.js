@@ -1,4 +1,4 @@
-import React from 'react'
+import React , {useRef} from 'react'
 import { signIn, signOut, useSession, getSession } from 'next-auth/client';
 import moment from 'moment';
 import Link from 'next/link'
@@ -8,149 +8,31 @@ import { useState, useEffect } from 'react';
 import {sanityClient} from '../sanity'; 
 //import {fetch as isoFetch} from 'isomorphic-unfetch';
 //import fetch from 'isomorphic-unfetch';
+import AdminMain from '../components/admin/AdminMain';
+
 
 import useSWR from 'swr'
 import fetch from 'unfetch';
 
-
-
-//import dynamic from 'next/dynamic'
-
-// const UnauthenticatedComponent = dynamic(() =>
-//   import('../components/unauthenticated')
-// )
-// const AuthenticatedComponent = dynamic(() =>
-//   import('../components/authenticated')
-// )
-
 const Dashboard = () => {
 
     const [session, loading] = useSession();
-    const fetcher = (url) => fetch(url).then((res) => res.json());
-    const { data, error } = useSWR('/api/users', fetcher);
-
+   
+ 
   if (loading) {
     return <p>Loading...</p>;
   }
-    //console.log(dataFinal);
-    //if (typeof window !== 'undefined' && loading) return <p>Loading...</p>
-  //console.log(dataFinal)
-//   React.useEffect(async () => {
-//     console.log(session)
-//     const hello = await getSession()
-//     console.log(hello);
-//  }, [])
-   
-  //const momentOutcome = moment(dataFinal[0].createdTime).format('DD-MM-YYYY')
-
-  // When rendering client side don't display anything until loading is complete
-  //if (typeof window !== 'undefined' && loading) return null
-  // Fetch content from protected route
-  // if (session.data.name === 'admin') {
-  //   console.log('ello')
-
-  // }
-//  if(session.user.name === 'admin') {
-//   console.log('ello')
-//   }
 
     //  session.roles = 'admin';
   if (session.roles === 'admin') {
-    //session.roles = session.poo 
-    
+      return <>
+               <style jsx global>{`body {background: #f7f7f5;}`}</style>
+               <AdminMain />
+            </>
+  }
 
- 
-    //const [userState, setUserState] = useState('');
-
-  // useEffect(()=>{
-  //   let mounted = true
-
-  //   const fetchData = async () => {
-  //     try {
-  //     const res = await fetch('/api/users')
-  //     const json = await res.json()
-    
-  //     setUserState(json)
-  //   } catch (err) {
-  //     console.log(err)
-  // }
-  //   }
-  //   fetchData()
-  //   return function cleanup() {
-  //     mounted = false
-  //    }
-  // },[session])
-  
-return <>
-    <h1>Admin only</h1>
-
-     <header className={styles.header}>
-              <ul className={styles.ulHeader}>
-                <li>{session && <> 
-                 <Link href="/">
-                    <a>home</a>
-                 </Link>
-                 </>}
-                 </li>
-                <li></li>
-                <li>
-                {!session && <>
-                   Not signed in <br/>
-                   <button onClick={() => signIn()}>Sign in</button>
-                 </>}
-                 {session && <>
-                
-                <button onClick={() => signOut()}>Sign out</button>
-                   </>}
-                </li>
-              </ul>
-            </header> 
-
-    {/* <p>Welcome, {session.user}</p> */}
-    <nav style={{marginBottom: '50px'}}>
-       <div>
-       <Link href="/new">
-            <a>Create User</a>
-        </Link>
-       </div>
-      
-    </nav>
-  <div>
-  {data && data.data.map(user => {
-          return (
-            <div style={{marginBottom: '30px'}} key={user._id}>
-              <section>
-                <div>
-                    {/*<Link href={`/${user._id}`}>
-                       <a>{user.userName}</a> 
-                      <a>{user.password}</a>
-          </Link>*/}
-                    <p>user name: {user?.userName}</p>
-                    <p>password: {user?.password}</p>
-                    <p>database id: {user?._id}</p>
-                    <p>role: {user?.roles}</p>
-                </div>
-                <div>
-                  <Link href={`/${user?._id}`}>
-                    <button>Delete</button>
-                  </Link>
-                  <Link href={`/${user?._id}/edit`}>
-                    <button>Edit</button>
-                  </Link>
-                </div>
-              </section>
-            </div>
-          )
-        })}
-
-      </div>
-
-
-  </>
-} // end of if statement 
-
-if (session.roles !== 'admin') {
-  return (
+  if (session.roles !== 'admin') {
+      return (
     <>
      
      {session && <>
@@ -159,14 +41,13 @@ if (session.roles !== 'admin') {
     </>}
     </>
   
-  )
-}
+  )}
 }
 
 export default Dashboard
 
 export const getServerSideProps = async (context) => {
-
+ //console.log(context);
   //const resUsers = await isoFetch('http://localhost:3000/api/users/');
  
 
@@ -178,10 +59,8 @@ export const getServerSideProps = async (context) => {
 
   const session = await getSession(context);
 
-  //session.roles = 'admin';
- // console.log('SESSION', session);
-  //console.log(context);
 
+ // console.log('SESSION', session);
   if (!session) {
     context.res.writeHead(302, { Location: '/' })
     context.res.end()

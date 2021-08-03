@@ -7,26 +7,31 @@ import fetch from 'isomorphic-unfetch';
 import { signIn, signOut, useSession, getSession } from 'next-auth/client';
 
 
-const NewUser = () => {
-    const [form, setForm] = useState({userName: '', password: '', roles: 'client'});
+const NewUser = ({setForm, form, setEdit,edit}) => {
+
+    //const [form, setForm] = useState({userName: '', password: '', roles: 'client'});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setErrors] = useState({});
-    const router = useRouter();
     const [errorMsgUser, setErrorMsgUser] = useState(null)
     const [errorMsgPassword,setErrorMsgPassword] = useState(null)
     const [session, loading] = useSession();
-
-// need to figure out how this works VVV
-    useEffect(() => {
-        if (isSubmitting) {
-            if (Object.keys(errors).length === 0) {
-                createUser();
-            }
-            else {
-                setIsSubmitting(false);
-            }
+console.log(form)
+   // const router = useRouter();
+   // need to figure out how this works VVV
+    const updateUser = async () => {
+        try {
+            const res = await fetch(`/api/users/${form.id}`, {
+                method: 'PUT',
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(form)
+            })
+        } catch (error) {
+            console.log(error);
         }
-    }, [errors]);
+    }
 
     const createUser = async () => {
         try {
@@ -38,11 +43,25 @@ const NewUser = () => {
                 },
                 body: JSON.stringify(form)
             })
-            router.push("/dashboard");
+            //toggleChecked()
         } catch (error) {
             console.log(error);
         }
     }
+// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@ used by both @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+    useEffect(() => {
+        if (isSubmitting) {
+            if (Object.keys(errors).length === 0) {
+                edit === true ? updateUser() : createUser();
+                setEdit(false);
+                setForm({userName: '', password: '', roles: 'client', id: ''});
+            }
+            else {
+                setIsSubmitting(false);
+            }
+        }
+    }, [errors]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -76,11 +95,8 @@ const NewUser = () => {
     }
     
 return (
-        <div>
-                {
-                    isSubmitting
-                        ? <p>loading...</p>
-                        : <div className="form-wrapper-edit">
+        <>
+                 <div>
                         <form className="form-container-edit" onSubmit={handleSubmit}>
                             <input
                                type="text"
@@ -88,6 +104,8 @@ return (
                                 placeholder='User Name'
                                 name='userName'
                                 onChange={handleChange}
+                                value={form.userName}
+
                             />
 
                             <input 
@@ -96,6 +114,7 @@ return (
                                 name='password'                             
                                 onChange={handleChange}
                                 type="password"
+                                value={form.password}
                             />
                             <div>
                             <select name="roles" onChange={handleChange}>
@@ -105,15 +124,15 @@ return (
                             </select>
                             </div>
                           
-                            <button type='submit'>Create</button>
+                          {edit === true ? <button type='submit'>Edit</button> : <button type='submit'>Create</button>} 
                         </form>
                         <div>
                             <p>{errorMsgUser }</p> 
                             <p>{errorMsgPassword }</p> 
                             </div>
-                            </div>
-                }
-            </div>
+                </div>
+                
+            </>
  
 )
 }

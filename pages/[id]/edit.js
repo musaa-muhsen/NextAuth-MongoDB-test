@@ -56,11 +56,6 @@ const EditUser = () => {
     //         mounted = false
     //        }
     //   },[])
-
-   
-
-
-
     // console.log(userState)
 
     const updateUser = async () => {
@@ -170,7 +165,7 @@ return (
                        <p>{errorMsgUser }</p> 
                        <p>{errorMsgPassword }</p> 
                        </>
-        }
+                  }
             </div>
     </div>
 )

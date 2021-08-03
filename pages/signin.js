@@ -17,6 +17,14 @@ export default function SignIn({ csrfToken }) {
   const { error } = useRouter().query;
 
   return (
+    <>
+      <style jsx global>
+      {`
+      body {
+          background: #fff;
+       }
+   `}
+</style>
     <section className={styles.mainContainer}>
 
     <div className={styles.signFormWrapper}>
@@ -35,7 +43,7 @@ export default function SignIn({ csrfToken }) {
     </div>
     
     </section>
-    
+  </>  
   )
 }
 
