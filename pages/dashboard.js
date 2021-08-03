@@ -26,9 +26,8 @@ import fetch from 'unfetch';
 const Dashboard = () => {
 
     const [session, loading] = useSession();
-    const [userState, setUserState] = useState('');
     const fetcher = (url) => fetch(url).then((res) => res.json());
-    const { data, error } = useSWR('/api/users', fetcher)
+    const { data, error } = useSWR('/api/users', fetcher);
 
   if (loading) {
     return <p>Loading...</p>;
@@ -55,9 +54,13 @@ const Dashboard = () => {
 //   console.log('ello')
 //   }
 
+    //  session.roles = 'admin';
+  if (session.roles === 'admin') {
+    //session.roles = session.poo 
+    
 
-  if (session.user.name == 'admin') {
-    console.log()
+ 
+    //const [userState, setUserState] = useState('');
 
   // useEffect(()=>{
   //   let mounted = true
@@ -79,6 +82,8 @@ const Dashboard = () => {
   // },[session])
   
 return <>
+    <h1>Admin only</h1>
+
      <header className={styles.header}>
               <ul className={styles.ulHeader}>
                 <li>{session && <> 
@@ -119,16 +124,17 @@ return <>
                     {/*<Link href={`/${user._id}`}>
                        <a>{user.userName}</a> 
                       <a>{user.password}</a>
-                    </Link>*/}
-                    <p>user name: {user.userName}</p>
-                    <p>password: {user.password}</p>
-                    <p>database id: {user._id}</p>
+          </Link>*/}
+                    <p>user name: {user?.userName}</p>
+                    <p>password: {user?.password}</p>
+                    <p>database id: {user?._id}</p>
+                    <p>role: {user?.roles}</p>
                 </div>
                 <div>
-                  <Link href={`/${user._id}`}>
+                  <Link href={`/${user?._id}`}>
                     <button>Delete</button>
                   </Link>
-                  <Link href={`/${user._id}/edit`}>
+                  <Link href={`/${user?._id}/edit`}>
                     <button>Edit</button>
                   </Link>
                 </div>
@@ -143,12 +149,12 @@ return <>
   </>
 } // end of if statement 
 
-if (session !== 'admin') {
+if (session.roles !== 'admin') {
   return (
     <>
      
      {session && <>
-      <p> Signed in as {session.user.name} </p>
+      <p> Signed in as {session.userName} </p>
       <button onClick={() => signOut()}>Sign out</button>
     </>}
     </>
@@ -171,7 +177,9 @@ export const getServerSideProps = async (context) => {
   const fs = require('fs');
 
   const session = await getSession(context);
-  //console.log('SESSION', session);
+
+  //session.roles = 'admin';
+ // console.log('SESSION', session);
   //console.log(context);
 
   if (!session) {
@@ -192,14 +200,14 @@ export const getServerSideProps = async (context) => {
 //const fetcher = (url) => fetch(url).then((res) => res.json());
   // const { data, error } = useSWR('/api/users');
   // console.log('userSWR:', data);
-    
+    /*
     const querySanity = `{
-    "one": *[_type == "client" && name == "${session.user.name}"],
+    "one": *[_type == "client" && name == "${session.roles}"],
     "two": *[_type == "footer"]
     }`
-  const sanity = session.user.name !== 'admin' ? await sanityClient.fetch(querySanity) : null;
-  console.log("sanity data:",sanity);
-
+  const sanity = session?.roles !== 'admin' ? await sanityClient.fetch(querySanity) : null;
+ // console.log("sanity data:",sanity);
+*/
 
    // GOOGLE DRIVE API TEST CONTENT TOKEN NEEDS REFRESHING
    // https://stackoverflow.com/questions/66058279/token-has-been-expired-or-revoked-google-oauth2-refresh-token-gets-expired-i

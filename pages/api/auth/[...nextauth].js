@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth'
+import NextAuth, {} from 'next-auth'
 import Providers from 'next-auth/providers'
 //import axios from 'axios'
 
@@ -28,13 +28,15 @@ const options = {
           //console.log(e.userName);
           return e.userName == credentials.username && e.password == credentials.password
           });
-        
+        console.log(filteredUser);
          
            // or !emails || emails.length === 0
             if (filteredUser.length > 0) {
               const user = {
-                name: filteredUser[0].userName,
-                DB_id: filteredUser[0]._id
+                //name: filteredUser[0].userName,
+                userName: filteredUser[0].userName,
+                DB_id: filteredUser[0]._id,
+                roles: filteredUser[0].roles
               }
               return Promise.resolve(user);
             } else {
@@ -53,14 +55,36 @@ const options = {
       //maxAge: 30 * 24 * 60 * 60 // 30 days
   },
   callbacks: {
-    jwt: async (token, user) => {
+    jwt: async (token, user, account) => {
+
+
       if (user?.DB_id) {
-        token.id = user.DB_id
+        token.DB_id = user.DB_id
+      }     
+      if (user?.userName) {
+        token.userName = user.userName
       }
-      return token
+      if (user?.roles) {
+        token.roles = user.roles
+      }
+      //console.log('account:',account);
+
+      return Promise.resolve(token)
     },
     session: async (session, token) => {
-      session.DB_id = token.id
+
+      if (token?.DB_id) {
+        session.DB_id = token.DB_id
+      }
+
+      if (token?.userName) {
+        session.userName = token.userName
+      }
+
+      if (token?.roles) {
+        session.roles = token.roles
+      }
+
       return Promise.resolve(session)
     },
     redirect: async (url, baseUrl) => {

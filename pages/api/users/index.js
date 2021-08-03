@@ -9,7 +9,7 @@ export default async (req, res) => {
     if (session) {
         const {method} = req;
         //console.log(method) // post or get method 
-        if (session.user.name === 'admin') {
+        if (session.roles === 'admin') {
         switch(method) {
             case "GET": 
               try {

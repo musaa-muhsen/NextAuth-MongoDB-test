@@ -7,7 +7,7 @@ import useSWR from 'swr';
 import Link from 'next/link'
 
 const User = ({userIdz}) => {
-console.log(userIdz);
+
     const router = useRouter();
     const userId = router.query.id;
     const [userState, setUserState] = useState(null);
@@ -37,12 +37,12 @@ console.log(userIdz);
 
     //   console.log(userState);
     //const fetcher = (...args) => fetch(...args).then(res => res.json());
+  
     const fetcher = (url) => fetch(url).then((res) => res.json());
-
     const { data } = useSWR(`/api/users/${userIdz}`, fetcher);
-    console.log(data)
+    
     useEffect(() => {
-        setUserState(data)
+        setUserState(data);
     }, [])
   
   
@@ -97,7 +97,7 @@ console.log(userState)
 }
 
 export const getServerSideProps  = async ({ query: { id } }) => {
-console.log(id);
+
     // try {
 
     //     const res = await fetch(`http://localhost:3000/api/users/${id}`);

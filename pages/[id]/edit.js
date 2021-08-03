@@ -10,8 +10,6 @@ import useSWR from 'swr'
 
 const EditUser = () => {
 
-
-
   //const [form, setForm] = useState({})
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [userState, setUserState] = useState({});
@@ -28,14 +26,9 @@ const EditUser = () => {
     const { data } = useSWR(`/api/users/${router.query.id}`, fetcher)
   
     //const initialState = userState !== undefined ? {userName: userState.data.userName, password: data.data.password} : {};
-    const initialState = data == undefined ? {} : {userName: data.data.userName, password: data.data.password};
-    console.log(initialState)
-    const [form, setForm] = useState(initialState);
-    
-    // useEffect(() => {
-    //     setUserState(data)
-
-    // }, [session])
+    //const initialState = data == undefined ? {} : {userName: data.data?.userName, password: data.data?.password};
+   // console.log(initialState)
+    const [form, setForm] = useState({roles: 'client'});
 
     useEffect(() => {
         if (isSubmitting) {
@@ -116,8 +109,6 @@ const EditUser = () => {
 
         return err;
     }
- 
-    
 
 return (
     <div>
@@ -144,7 +135,10 @@ return (
               </ul>
             </header> 
         <div className={'form-wrapper-edit'}>  
-
+        {
+                    isSubmitting
+                        ? <p>loading...</p>
+                        :<>
                     <form className={'form-container-edit'} onSubmit={handleSubmit}>
                             <input
                                type="text"
@@ -164,11 +158,19 @@ return (
                                 value={form.password}
                                 type="password"
                             />
+                                <div>
+                            <select name="roles" onChange={handleChange}>
+                            {/* <option selected hidden>Choose here</option> */}
+                                  <option name="client" value="client">Client</option>
+                                  <option name="admin" value="admin">Admin</option>
+                            </select>
+                            </div>
                             <button type='submit'>Edit</button>
                         </form>
                        <p>{errorMsgUser }</p> 
                        <p>{errorMsgPassword }</p> 
-                
+                       </>
+        }
             </div>
     </div>
 )

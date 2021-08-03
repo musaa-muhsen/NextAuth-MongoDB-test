@@ -8,7 +8,7 @@ import { signIn, signOut, useSession, getSession } from 'next-auth/client';
 
 
 const NewUser = () => {
-    const [form, setForm] = useState({userName: '', password: ''});
+    const [form, setForm] = useState({userName: '', password: '', roles: 'client'});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setErrors] = useState({});
     const router = useRouter();
@@ -16,7 +16,7 @@ const NewUser = () => {
     const [errorMsgPassword,setErrorMsgPassword] = useState(null)
     const [session, loading] = useSession();
 
-//console.log(form)
+console.log(form)
 
 // need to figure out how this works VVV
     useEffect(() => {
@@ -54,6 +54,8 @@ const NewUser = () => {
     }
 
     const handleChange = (e) => {
+        //console.log('e.target:',e.target); // current element 
+       // console.log(e.target.value);
         setForm({
             ...form,
             [e.target.name]: e.target.value
@@ -121,6 +123,14 @@ return (
                                 onChange={handleChange}
                                 type="password"
                             />
+                            <div>
+                            <select name="roles" onChange={handleChange}>
+                            {/* <option selected hidden>Choose here</option> */}
+                                  <option value="client">Client</option>
+                                  <option value="admin">Admin</option>
+                            </select>
+                            </div>
+                          
                             <button type='submit'>Create</button>
                         </form>
                         <div>

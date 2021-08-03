@@ -9,7 +9,7 @@ export default async (req, res) => {
     const session = await getSession({ req });
     if (session) {
 
-        if (session.user.name === 'admin') {
+        if (session.roles === 'admin') {
         console.log('Session', JSON.stringify(session, null, 2));
         const {
             // id is referencing /3837373 etc 
