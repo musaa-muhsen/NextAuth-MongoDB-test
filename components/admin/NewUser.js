@@ -5,9 +5,10 @@ import {useState, useEffect} from 'react'
 import { useRouter } from 'next/router';
 import fetch from 'isomorphic-unfetch';
 import { signIn, signOut, useSession, getSession } from 'next-auth/client';
+import useForceUpdate from 'use-force-update';
 
 
-const NewUser = ({setForm, form, setEdit,edit}) => {
+const NewUser = ({setForm, form, setEdit,edit, alert, setAlert}) => {
 
     //const [form, setForm] = useState({userName: '', password: '', roles: 'client'});
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -15,6 +16,7 @@ const NewUser = ({setForm, form, setEdit,edit}) => {
     const [errorMsgUser, setErrorMsgUser] = useState(null)
     const [errorMsgPassword,setErrorMsgPassword] = useState(null)
     const [session, loading] = useSession();
+
 console.log(form)
    // const router = useRouter();
    // need to figure out how this works VVV
@@ -56,6 +58,7 @@ console.log(form)
                 edit === true ? updateUser() : createUser();
                 setEdit(false);
                 setForm({userName: '', password: '', roles: 'client', id: ''});
+                setAlert(true)
             }
             else {
                 setIsSubmitting(false);
@@ -129,6 +132,7 @@ return (
                         <div>
                             <p>{errorMsgUser }</p> 
                             <p>{errorMsgPassword }</p> 
+                            <>{alert && <h2> Submit Successful</h2>}</>
                             </div>
                 </div>
                 

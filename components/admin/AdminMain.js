@@ -5,66 +5,113 @@ import useSWR from 'swr'
 import fetch from 'unfetch';
 import AdminHeader from './AdminHeader';
 import NewUser from './NewUser';
+import useForceUpdate from 'use-force-update';
+import { deleteUser } from '../../utils/usersFetch';
+import axios from 'axios'
 
 
 
 export default function AdminMain() {
 
     const [session, loading] = useSession();
-    const fetcher = (url) => fetch(url).then((res) => res.json());
-    const { data, error } = useSWR('/api/users', fetcher);
-    const [dataState, setDataState] = useState(null);
-    const [checked, setChecked] = useState(false);
-  const toggleChecked = () => setChecked(value => !value);
-  const [form, setForm] = useState({userName: '', password: '', roles: 'client', id: ''});
-  const [edit, setEdit] = useState(false)
-console.log(form)
-  const deleteUser = async (userId) => {     
-    toggleChecked()
+   
+    const [dataState, setDataState] = useState(false);
+    // const [checked, setChecked] = useState(false);
+    // const toggleChecked = () => setChecked(value => !value);
+    const [form, setForm] = useState({userName: '', password: '', roles: 'client', id: ''});
+    const [edit, setEdit] = useState(false);
+    const [alert, setAlert] = useState(false);
 
-    try {
-        await fetch(`/api/users/${userId}`, {
-            method: "Delete"
-        });
+    
+    //const forceUpdate = useForceUpdate();
+
+    // const [mounted, setMounted] = useState(false);
+    // const fetcher = (url) => fetch(url).then((res) => res.json());
+    // const { data, error } = useSWR(mounted ? '/api/users': null, fetcher);
+    const [list, setList] = useState([]);
+    let mounted = true;
+
+//     console.log(list.data);
+// console.log
+    const getUsers = async () => {
+        try {
+      const userPosts = await axios.get("/api/users")
+          return userPosts.data
+        
+        } catch (err) {
+          console.error(err.message);
+        }
+      };
+      
+    useEffect(async () => {
+
+        setDataState(await getUsers());
+        const interval=setInterval(async ()=>{
+            setDataState(await getUsers());
+           },500)
+
+        return()=>clearInterval(interval)
+    },[])
+    console.log(dataState)
+
+    // useEffect(() => {
 
 
+    //     getUsers()
+    //     .then(items => {
+    //         if(mounted) {
+    //           setList(items)
+    //         }
+    //     })
 
-    } catch (error) {
-        console.log(error)
-    }
-}
-    useEffect(() => {
-        setDataState(data)
-    })
-    //console.log(dataState)
+    //     return () => mounted = false;
+    // },[alert,list])
+
+    // useEffect(() => {
+    //     if(alert) {
+    //       setTimeout(() => {
+    //         if(mounted) {
+    //           setAlert(false);
+    //         }
+    //       }, 1000)
+    //     }
+    //   }, [alert])
 
     return (
         <>
        <AdminHeader /> 
-       <NewUser setForm={setForm} form={form} edit={edit} setEdit={setEdit}/>    
+       <NewUser form={form} setForm={setForm} edit={edit} setEdit={setEdit} alert={alert} setAlert={setAlert}/>    
 
 <div>
-{dataState && dataState.data.map((user, index) => {
+{dataState.data && dataState.data.map((user, index) => {
      return (
        <div key={index}>
          <section>
            <div>
-               <p>user name: {user?.userName}</p>
-               <p>password: {user?.password}</p>
-               <p>database id: {user?._id}</p>
-               <p>role: {user?.roles}</p>
+               <p><span>🦄</span> {user?.userName}</p>
+               <p><span>🔒</span> {user?.password}</p>
+               <p><span>👁</span> {user?._id}</p>
+               <p><span>🎭</span> {user?.roles}</p>
            </div>
            <div>                 
-               <button onClick={() => deleteUser(user?._id)}>Delete</button>                                
+                                              
                <button onClick={() => {
                       setForm({userName: user?.userName, password: user?.password, roles: user?.roles, id: user?._id });
                       setEdit(true);
-               }}>Edit</button>                  
+                      //setDataState(!dataState)
+                      
+               }}>✏️</button>  
+               <button onClick={() => {
+                   
+                   deleteUser(user?._id)
+                   //forceUpdate();
+                   //setDataState(!dataState)
+            }}> 🗑</button>                 
            </div>
          </section>
        </div>
      )
-   })}
+   })} 
 
  </div> 
         </>
