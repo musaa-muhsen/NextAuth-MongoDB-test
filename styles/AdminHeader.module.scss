@@ -1,0 +1,26 @@
+.adminHeader {
+    margin-top: 60px;
+    p {
+        text-align: center;
+    }
+}
+
+.header {
+   
+    display: flex;
+    margin: auto;
+    .ulHeader {
+
+        //text-transform: capitalize;
+        text-align: center;
+        //width: 110px;
+        //max-width: 1400px;
+        margin: 5px auto 60px auto;
+
+        display: flex;
+        li {
+     
+            font-size: 0.7rem;
+        }
+    }
+  }

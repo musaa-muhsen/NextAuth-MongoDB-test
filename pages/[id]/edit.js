@@ -68,8 +68,6 @@ const EditUser = () => {
                 },
                 body: JSON.stringify(form)
             })
-
-            router.push("/dashboard");
         } catch (error) {
             console.log(error);
         }

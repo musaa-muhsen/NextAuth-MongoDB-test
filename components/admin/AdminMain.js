@@ -1,11 +1,9 @@
 import React, {useState, useEffect} from 'react'
 import { signIn, signOut, useSession, getSession } from 'next-auth/client';
-import Link from 'next/link'
-import useSWR from 'swr'
-import fetch from 'unfetch';
+import styles from '../../styles/AdminMain.module.scss';
+import Link from 'next/link';
 import AdminHeader from './AdminHeader';
 import NewUser from './NewUser';
-import useForceUpdate from 'use-force-update';
 import { deleteUser } from '../../utils/usersFetch';
 import axios from 'axios'
 
@@ -16,26 +14,40 @@ export default function AdminMain() {
     const [session, loading] = useSession();
    
     const [dataState, setDataState] = useState(false);
-    // const [checked, setChecked] = useState(false);
-    // const toggleChecked = () => setChecked(value => !value);
     const [form, setForm] = useState({userName: '', password: '', roles: 'client', id: ''});
     const [edit, setEdit] = useState(false);
-    const [alert, setAlert] = useState(false);
+    const [alertDelete, setAlertDelete] = useState(false);
+    const [alertCreate, setAlertCreate] = useState(false);
+    const [alertUpdate, setAlertUpdate] = useState(false);
 
-    
-    //const forceUpdate = useForceUpdate();
+     
+    useEffect(() => {
+        let t;
+        if(alertDelete) {
+          t = setTimeout(() => {
+            setAlertDelete(false);
+          }, 4000)    
+        }
+       
+        if(alertCreate) {
+           t =  setTimeout(() => {
+             setAlertCreate(false);
+            }, 4000)
+          }
 
-    // const [mounted, setMounted] = useState(false);
-    // const fetcher = (url) => fetch(url).then((res) => res.json());
-    // const { data, error } = useSWR(mounted ? '/api/users': null, fetcher);
-    const [list, setList] = useState([]);
-    let mounted = true;
+          if(alertUpdate) {
+          t = setTimeout(() => {
+             setAlertUpdate(false);
+            }, 4000)
+          }
 
-//     console.log(list.data);
-// console.log
+          return()=>clearTimeout(t)
+      }, [alertDelete,alertCreate,alertUpdate])
+
+
     const getUsers = async () => {
         try {
-      const userPosts = await axios.get("/api/users")
+          const userPosts = await axios.get("/api/users")
           return userPosts.data
         
         } catch (err) {
@@ -46,69 +58,55 @@ export default function AdminMain() {
     useEffect(async () => {
 
         setDataState(await getUsers());
+
         const interval=setInterval(async ()=>{
             setDataState(await getUsers());
            },500)
 
         return()=>clearInterval(interval)
     },[])
-    console.log(dataState)
-
-    // useEffect(() => {
-
-
-    //     getUsers()
-    //     .then(items => {
-    //         if(mounted) {
-    //           setList(items)
-    //         }
-    //     })
-
-    //     return () => mounted = false;
-    // },[alert,list])
-
-    // useEffect(() => {
-    //     if(alert) {
-    //       setTimeout(() => {
-    //         if(mounted) {
-    //           setAlert(false);
-    //         }
-    //       }, 1000)
-    //     }
-    //   }, [alert])
-
+   
     return (
         <>
-       <AdminHeader /> 
-       <NewUser form={form} setForm={setForm} edit={edit} setEdit={setEdit} alert={alert} setAlert={setAlert}/>    
+        <>{alertDelete && <div className={`${styles.alertDanger} ${styles.alertContainer}`}><p>🚨 deleted!</p></div>}</>
+        <>{alertCreate && <div className={`${styles.alertSuccess} ${styles.alertContainer}`}><p>💾 created!</p></div>}</>
+        <>{alertUpdate && <div className={`${styles.alertSuccess} ${styles.alertContainer}`}><p>✅ updated!</p></div>}</>
 
-<div>
+       <AdminHeader /> 
+       <div className={styles.formContainer}>
+           <NewUser form={form} setForm={setForm} edit={edit} setEdit={setEdit} alertCreate={alertCreate} setAlertCreate={setAlertCreate} alertUpdate={alertUpdate} setAlertUpdate={setAlertUpdate} />    
+       </div>
+
+<div className={styles.usersWrapper}>
 {dataState.data && dataState.data.map((user, index) => {
      return (
-       <div key={index}>
-         <section>
-           <div>
-               <p><span>🦄</span> {user?.userName}</p>
-               <p><span>🔒</span> {user?.password}</p>
-               <p><span>👁</span> {user?._id}</p>
-               <p><span>🎭</span> {user?.roles}</p>
+       <div className={styles.userCardContainer} key={index}>
+       
+           <div className={styles.topContainer}>
+               <div><div className={`${styles.makeBigger} ${styles.emojiContainer}`}>🦄</div><div className={`${styles.outputContainer}`}>{user?.userName}</div></div>
+               <div><div className={`${styles.makeBigger} ${styles.emojiContainer}`}>🔑</div><div className={`${styles.outputContainer}`}>{user?.password}</div></div>
+               <div><div className={`${styles.makeBigger} ${styles.emojiContainer}`}>👁</div><div className={`${styles.outputContainer}`}>{user?._id}</div></div>
+               <div><div className={`${styles.makeBigger} ${styles.emojiContainer}`}>🎭</div><div className={`${styles.outputContainer}`}>{user?.roles}</div></div>
+
            </div>
-           <div>                 
-                                              
+           <div className={styles.buttonsContainer}>            
+           <div className={styles.buttonsWrapper}>            
+                        
                <button onClick={() => {
                       setForm({userName: user?.userName, password: user?.password, roles: user?.roles, id: user?._id });
                       setEdit(true);
-                      //setDataState(!dataState)
-                      
+                     
                }}>✏️</button>  
-               <button onClick={() => {
-                   
+               <button 
+               onClick={() => {  
                    deleteUser(user?._id)
-                   //forceUpdate();
-                   //setDataState(!dataState)
-            }}> 🗑</button>                 
+                   setAlertDelete(true)
+               }}
+               className={styles.make}
+            >🗑️</button>                 
            </div>
-         </section>
+           </div>
+         
        </div>
      )
    })} 

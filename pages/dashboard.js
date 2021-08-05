@@ -1,24 +1,17 @@
-import React , {useRef} from 'react'
+import React , {useState, useEffect ,useRef} from 'react'
 import { signIn, signOut, useSession, getSession } from 'next-auth/client';
 import moment from 'moment';
 import Link from 'next/link'
-//import axios from 'axios';
 import styles from '../styles/Dashboard.module.scss';
-import { useState, useEffect } from 'react';
 import {sanityClient} from '../sanity'; 
-//import {fetch as isoFetch} from 'isomorphic-unfetch';
-//import fetch from 'isomorphic-unfetch';
+
 import AdminMain from '../components/admin/AdminMain';
 
 
-import useSWR from 'swr'
-import fetch from 'unfetch';
-
 const Dashboard = () => {
 
-    const [session, loading] = useSession();
+  const [session, loading] = useSession();
    
- 
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -26,15 +19,15 @@ const Dashboard = () => {
     //  session.roles = 'admin';
   if (session.roles === 'admin') {
       return <>
-               <style jsx global>{`body {background: #f7f7f5;}`}</style>
+               <style jsx global>{`body {background: #f6f6f6;font-family: 'Source Code Pro', monospace;} 
+`}</style>
                <AdminMain />
             </>
   }
 
   if (session.roles !== 'admin') {
       return (
-    <>
-     
+    <>  
      {session && <>
       <p> Signed in as {session.userName} </p>
       <button onClick={() => signOut()}>Sign out</button>
@@ -42,6 +35,7 @@ const Dashboard = () => {
     </>
   
   )}
+
 }
 
 export default Dashboard

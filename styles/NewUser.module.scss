@@ -1,0 +1,54 @@
+.borderTop {
+        //height: 10px;
+        width: 100%;
+        border-top: 1px solid #12131d !important;
+}
+
+.submitContainer {
+    display: flex;
+    justify-content: flex-end;
+
+    .saveBtn, .updateBtn {
+        border-radius: 5px;
+        padding: 5px 9px;
+        text-transform: uppercase;
+        border: none;
+        font-family: 'Source Code Pro', monospace;
+        color: white;
+        font-size: 16px; 
+        background: #12131d;
+    }
+
+}
+
+.selector {
+    margin-top: 20px;
+    padding: 4px 4px;
+    border: #12131d solid 1px;
+    font-size: 16px;
+    font-family: 'Source Code Pro', monospace !important;
+    margin-bottom: 15px;
+
+}
+
+.passwordInput {
+   width: 90% !important;
+}
+
+.passwordContainer {
+    cursor: pointer;
+    //border-right: 1px solid #000;
+    display: flex;
+    height: auto;
+    .showPasswordContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #fff;
+        width: 40px;
+    }
+}
+
+.formWrapper {
+    border: #000 solid 1px;
+}

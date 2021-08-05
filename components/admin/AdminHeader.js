@@ -1,28 +1,31 @@
 import Link from 'next/link'
 import { signIn, signOut, useSession, getSession } from 'next-auth/client';
+import styles from '../../styles/AdminHeader.module.scss';
 
 
 export default function AdminHeader() {
     const [session, loading] = useSession();
 
-    return <><h1>Admin only</h1>
-    <header>
-        <ul>
+    return <>
+            <div className={styles.adminHeader}><p>Admin 🚫nly</p></div>
+
+    <header className={`${styles.header}`} >
+       
+        <ul className={`${styles.ulHeader}`}>
           <li>{session && <> 
            <Link href="/">
               <a>home</a>
            </Link>
            </>}
            </li>
-          <li></li>
+          <li>|</li>
           <li>
           {!session && <>
-             Not signed in <br/>
-             <button onClick={() => signIn()}>Sign in</button>
+             <button onClick={() => signIn()}>ign in</button>
            </>}
            {session && <>
           
-          <button onClick={() => signOut()}>Sign out</button>
+          <a onClick={() => signOut()}>sign out</a>
              </>}
           </li>
         </ul>

@@ -1,14 +1,12 @@
 import Link from 'next/link'
-import {useState, useEffect} from 'react'
-//import axios from 'axios'
-//import {Button , Form, Loader } from 'semantic-ui-react';
+import {useState, useEffect, useRef} from 'react'
 import { useRouter } from 'next/router';
-import fetch from 'isomorphic-unfetch';
 import { signIn, signOut, useSession, getSession } from 'next-auth/client';
-import useForceUpdate from 'use-force-update';
+import styles from '../../styles/NewUser.module.scss';
 
 
-const NewUser = ({setForm, form, setEdit,edit, alert, setAlert}) => {
+
+const NewUser = ({setForm, form, setEdit,edit, alertCreate, setAlertCreate ,alertUpdate,setAlertUpdate}) => {
 
     //const [form, setForm] = useState({userName: '', password: '', roles: 'client'});
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -17,12 +15,12 @@ const NewUser = ({setForm, form, setEdit,edit, alert, setAlert}) => {
     const [errorMsgPassword,setErrorMsgPassword] = useState(null)
     const [session, loading] = useSession();
 
-console.log(form)
+
    // const router = useRouter();
    // need to figure out how this works VVV
-    const updateUser = async () => {
+    const updateUser = async (id) => {
         try {
-            const res = await fetch(`/api/users/${form.id}`, {
+            const res = await fetch(`/api/users/${id}`, {
                 method: 'PUT',
                 headers: {
                     "Accept": "application/json",
@@ -50,15 +48,20 @@ console.log(form)
             console.log(error);
         }
     }
-// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@ used by both @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@ used in both @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
     useEffect(() => {
         if (isSubmitting) {
             if (Object.keys(errors).length === 0) {
-                edit === true ? updateUser() : createUser();
-                setEdit(false);
+                if (edit === true) {
+                    updateUser(form.id);
+                    setAlertUpdate(true) 
+                    setEdit(false);
+                } else {
+                    createUser();
+                    setAlertCreate(true)
+                }         
                 setForm({userName: '', password: '', roles: 'client', id: ''});
-                setAlert(true)
             }
             else {
                 setIsSubmitting(false);
@@ -96,11 +99,21 @@ console.log(form)
 
         return err;
     }
+
+    const inputRef = useRef(null);
+
+    const showPassword = () => {
+      //inputRef.current.classList.add("green");
+      const currentType = inputRef.current.type;
+      inputRef.current.type = currentType === "text" ? "password" : "text";
+    };
     
 return (
         <>
-                 <div>
-                        <form className="form-container-edit" onSubmit={handleSubmit}>
+                        <form className={styles.formContainer} onSubmit={handleSubmit}>
+                        {/* <div className={styles.borderTop}>
+                            </div> */}
+                            <div className={styles.formWrapper}>
                             <input
                                type="text"
                                 label='User Name'
@@ -108,33 +121,42 @@ return (
                                 name='userName'
                                 onChange={handleChange}
                                 value={form.userName}
+                                className={styles.userNameInput}
 
                             />
-
+                            <div className={styles.borderTop}>
+                            </div >
+                            <div className={styles.passwordContainer}>
                             <input 
                                 label='Password'
                                 placeholder='Password'
                                 name='password'                             
                                 onChange={handleChange}
-                                type="password"
+                                ref={inputRef} 
+                                type={"password"}
                                 value={form.password}
+                                className={styles.passwordInput}
                             />
+                            <div className={styles.showPasswordContainer} onClick={showPassword}><div >👀</div></div>
+                            </div>
+                            {/* <div className={styles.borderTop}>
+                            </div> */}
+                            </div>
                             <div>
-                            <select name="roles" onChange={handleChange}>
-                            {/* <option selected hidden>Choose here</option> */}
-                                  <option value="client">Client</option>
-                                  <option value="admin">Admin</option>
+                            <select className={styles.selector} name="roles" onChange={handleChange}>
+                             <option selected hidden>Choose Role</option>  
+                                  <option value="client">client</option>
+                                  <option value="admin">admin</option>
                             </select>
                             </div>
-                          
-                          {edit === true ? <button type='submit'>Edit</button> : <button type='submit'>Create</button>} 
+                            <div className={styles.submitContainer}>
+                          {edit === true ? <button className={styles.updateBtn} type='submit'>Update</button> : <button className={styles.saveBtn} type='submit'>Save</button>}
+                          </div> 
                         </form>
                         <div>
                             <p>{errorMsgUser }</p> 
                             <p>{errorMsgPassword }</p> 
-                            <>{alert && <h2> Submit Successful</h2>}</>
                             </div>
-                </div>
                 
             </>
  
